@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThaiD Vault | คลังข้อมูลและความปลอดภัยส่วนตัว</title>
+  
+  <!-- Tailwind CSS v3 CDN for instant standalone zero-build perfection -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            apple: {
+              coral: '#e85a2d',
+              coralHover: '#d64f24',
+              blue: '#0071e3',
+              darkBg: '#0c0c0e',
+              cardBgDark: '#161619',
+              lightBg: '#f5f5f7',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Prompt', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Material Symbols Outlined -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(150, 150, 150, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(150, 150, 150, 0.45);
+    }
+  </style>
+
+  <!-- Theme init without flicker -->
+  <script>
+    (function() {
+      const saved = localStorage.getItem('thaid-theme');
+      if (saved === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    })();
+  </script>
+</head>
+<body class="min-h-screen bg-[#f5f5f7] dark:bg-[#0c0c0e] text-[#1d1d1f] dark:text-[#f5f5f7] flex flex-col font-sans transition-colors duration-200">
+
+  <!-- ======================================================== -->
+  <!-- 1. TRANSLUCENT GLOBAL HEADER (APPLE FROSTED NAVBAR)     -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-40 h-[52px] bg-white/80 dark:bg-[#161619]/80 backdrop-blur-xl border-b border-black/[0.08] dark:border-white/[0.08] shadow-xs">
+    <div class="max-w-[1600px] w-full mx-auto px-4 sm:px-6 h-full flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="https://thaid.online" class="flex items-center gap-2.5 cursor-pointer group flex-shrink-0">
+        <div class="w-7 h-7 rounded-lg bg-[#e85a2d] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+          <span class="material-symbols-outlined text-[17px]">lock</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-sm sm:text-base font-bold tracking-tight text-[#1d1d1f] dark:text-white">
+            ThaiD<span class="text-[#e85a2d]">.online</span>
+          </span>
+          <span class="bg-[#e85a2d]/10 text-[#e85a2d] border border-[#e85a2d]/20 text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase">
+            VAULT
+          </span>
+        </div>
+      </a>
+
+      <!-- Center: Contextual Segmented Navigation Links (Unified 4-Pill Ecosystem Standard) -->
+      <nav class="hidden md:flex items-center gap-1 bg-stone-200/60 dark:bg-white/[0.06] p-1 rounded-xl border border-black/[0.04] dark:border-white/[0.05] text-xs font-medium">
+        <a
+          href="https://thaid.online"
+          class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          <span class="material-symbols-outlined text-[14px]">hub</span>
+          <span>ThaiD Hub</span>
+        </a>
+        <a
+          href="https://novel.thaid.online"
+          class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          <span class="material-symbols-outlined text-[14px]">edit_note</span>
+          <span>นิยาย AI</span>
+        </a>
+        <a
+          href="https://social.thaid.online"
+          class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          <span class="material-symbols-outlined text-[14px]">campaign</span>
+          <span>โพสต์ Facebook</span>
+        </a>
+        <a
+          href="https://sticker.thaid.online"
+          class="px-3 py-1 rounded-lg text-[#86868b] hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          <span class="material-symbols-outlined text-[14px]">sentiment_satisfied</span>
+          <span>สติกเกอร์ไลน์</span>
+        </a>
+      </nav>
+
+      <!-- Right Controls: Dark Mode Toggle + Lock + Settings + Mobile Hamburger -->
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- Theme Toggle -->
+        <button
+          type="button"
+          onclick="toggleDarkMode()"
+          class="p-1.5 rounded-lg text-stone-600 hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-white/10 transition-colors"
+          title="สลับโหมดมืด / สว่าง (Dark Mode)"
+        >
+          <span class="material-symbols-outlined text-[19px]" id="themeIcon">light_mode</span>
+        </button>
+
+        <!-- Change PIN / Security Settings -->
+        <button
+          type="button"
+          id="btnOpenPinModal"
+          onclick="openPinModal()"
+          class="hidden sm:inline-flex p-1.5 rounded-lg text-stone-600 hover:text-[#1d1d1f] dark:text-stone-400 dark:hover:text-stone-100 hover:bg-stone-200/60 dark:hover:bg-white/10 transition-colors"
+          title="ตั้งค่ารหัส PIN"
+        >
+          <span class="material-symbols-outlined text-[19px]">key</span>
+        </button>
+
+        <!-- Lock Vault Button -->
+        <button
+          type="button"
+          id="btnLockVault"
+          onclick="lockVault()"
+          class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-stone-200 dark:bg-white/10 hover:bg-stone-300 dark:hover:bg-white/20 text-[#1d1d1f] dark:text-white transition-all"
+        >
+          <span class="material-symbols-outlined text-[15px]">lock</span>
+          <span>ล็อกคลัง</span>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button
+          type="button"
+          onclick="toggleMobileMenu()"
+          class="md:hidden p-1.5 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-200/60 dark:hover:bg-white/10"
+        >
+          <span class="material-symbols-outlined text-[22px]">menu</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Drawer Nav -->
+    <div id="mobileDrawer" class="hidden md:hidden bg-white dark:bg-[#161619] border-b border-black/[0.08] dark:border-white/[0.08] px-4 py-3 space-y-2">
+      <a href="https://thaid.online" class="flex items-center gap-2 p-2 rounded-lg text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-white/5">
+        <span class="material-symbols-outlined text-[18px]">hub</span>
+        <span>ThaiD Hub</span>
+      </a>
+      <a href="https://novel.thaid.online" class="flex items-center gap-2 p-2 rounded-lg text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-white/5">
+        <span class="material-symbols-outlined text-[18px]">edit_note</span>
+        <span>นิยาย AI (ReadAWrite Studio)</span>
+      </a>
+      <a href="https://social.thaid.online" class="flex items-center gap-2 p-2 rounded-lg text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-white/5">
+        <span class="material-symbols-outlined text-[18px]">campaign</span>
+        <span>โพสต์ Facebook (Auto-Poster)</span>
+      </a>
+      <a href="https://sticker.thaid.online" class="flex items-center gap-2 p-2 rounded-lg text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-white/5">
+        <span class="material-symbols-outlined text-[18px]">sentiment_satisfied</span>
+        <span>สติกเกอร์ไลน์ (Sticker AI)</span>
+      </a>
+      <div class="pt-2 border-t border-stone-200 dark:border-white/10 flex justify-between">
+        <button onclick="openPinModal()" class="text-xs text-stone-500 hover:text-stone-300 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">key</span> เปลี่ยนรหัส PIN
+        </button>
+        <button onclick="lockVault()" class="text-xs text-red-500 hover:text-red-400 flex items-center gap-1 font-semibold">
+          <span class="material-symbols-outlined text-[16px]">lock</span> ล็อกคลังข้อมูล
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- 2. PIN LOCK OVERLAY SCREEN (ACTIVE WHEN LOCKED)          -->
+  <!-- ======================================================== -->
+  <div id="pinLockScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#f5f5f7]/95 dark:bg-[#0c0c0e]/95 backdrop-blur-2xl transition-all duration-300">
+    <div class="max-w-md w-full bg-white dark:bg-[#161619] rounded-3xl p-8 border border-black/[0.08] dark:border-white/[0.08] shadow-2xl text-center space-y-6">
+      
+      <!-- Vault Icon Glow -->
+      <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+        <div class="absolute inset-0 bg-gradient-to-tr from-[#e85a2d] to-[#0071e3] rounded-3xl blur-xl opacity-30"></div>
+        <div class="relative w-20 h-20 bg-gradient-to-tr from-[#e85a2d] to-[#0071e3] rounded-2xl flex items-center justify-center text-white shadow-lg">
+          <span class="material-symbols-outlined text-4xl">lock</span>
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <h1 class="text-2xl font-bold tracking-tight text-[#1d1d1f] dark:text-white">ThaiD Personal Vault</h1>
+        <p class="text-xs text-stone-500 dark:text-stone-400">ป้อนรหัส PIN เพื่อเข้าถึงข้อมูลสำคัญและรหัสผ่านส่วนตัว</p>
+      </div>
+
+      <!-- PIN Input Form -->
+      <form id="pinForm" onsubmit="submitPin(event)" class="space-y-4">
+        <div class="relative">
+          <input
+            type="password"
+            id="pinInput"
+            placeholder="ป้อนรหัส PIN (เริ่มต้น: 2026)"
+            maxlength="20"
+            autofocus
+            class="w-full text-center text-xl tracking-[0.3em] font-mono py-3.5 px-4 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-300 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#e85a2d] transition-all"
+          />
+        </div>
+        <div id="pinErrorMsg" class="hidden text-xs text-rose-500 font-medium"></div>
+
+        <button
+          type="submit"
+          class="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#e85a2d] to-[#d64f24] hover:from-[#d64f24] hover:to-[#c24219] text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+        >
+          <span class="material-symbols-outlined text-[18px]">lock_open</span>
+          <span>ปลดล็อกคลังข้อมูล</span>
+        </button>
+      </form>
+
+      <div class="text-[11px] text-stone-400 dark:text-stone-500">
+        🛡️ ข้อมูลในคลังถูกเข้ารหัสแบบ AES-256 ปลอดภัยระดับสูงสุด
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 3. MAIN UNLOCKED VAULT DASHBOARD                         -->
+  <!-- ======================================================== -->
+  <main id="mainContent" class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+
+    <!-- Top Banner / Quick Metric Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-[#0071e3]/10 text-[#0071e3] flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl">key</span>
+        </div>
+        <div>
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">รายการทั้งหมด</div>
+          <div class="text-xl font-bold tracking-tight text-[#1d1d1f] dark:text-white" id="statTotalItems">0</div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-[#e85a2d]/10 text-[#e85a2d] flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl">folder_managed</span>
+        </div>
+        <div>
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">หมวดหมู่</div>
+          <div class="text-xl font-bold tracking-tight text-[#1d1d1f] dark:text-white" id="statTotalCategories">0</div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl material-symbols-fill">star</span>
+        </div>
+        <div>
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">รายการโปรด</div>
+          <div class="text-xl font-bold tracking-tight text-[#1d1d1f] dark:text-white" id="statFavorites">0</div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-white dark:bg-[#161619] border border-black/[0.06] dark:border-white/[0.08] shadow-xs flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl">verified_user</span>
+        </div>
+        <div>
+          <div class="text-xs text-stone-500 dark:text-stone-400 font-medium">สถานะความปลอดภัย</div>
+          <div class="text-xs font-bold text-emerald-500 flex items-center gap-1 mt-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ปลอดภัย (AES-256)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Toolbar: Search + CTA Buttons -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-[#161619] p-3.5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-xs">
+      
+      <!-- Search Input -->
+      <div class="relative flex-1 min-w-[240px]">
+        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 text-[20px]">search</span>
+        <input
+          type="text"
+          id="searchInput"
+          oninput="handleSearch()"
+          placeholder="ค้นหาชื่อบริการ, อีเมล, โดเมน, หรือหมายเหตุ..."
+          class="w-full pl-10 pr-4 py-2 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-sm text-[#1d1d1f] dark:text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#e85a2d] transition-all"
+        />
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <button
+          onclick="openCategoryManagerModal()"
+          class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-stone-700 dark:text-stone-200 text-xs font-semibold transition-all"
+        >
+          <span class="material-symbols-outlined text-[16px]">folder_managed</span>
+          <span>จัดการหมวดหมู่</span>
+        </button>
+
+        <button
+          onclick="openBackupModal()"
+          class="inline-flex items-center justify-center p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-white/10 dark:hover:bg-white/15 text-stone-700 dark:text-stone-200 text-xs font-semibold transition-all"
+          title="สำรองข้อมูล & กู้คืน (Backup & Restore)"
+        >
+          <span class="material-symbols-outlined text-[17px]">backup</span>
+        </button>
+
+        <button
+          onclick="openItemModal()"
+          class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#e85a2d] hover:bg-[#d64f24] text-white text-xs font-semibold shadow-xs hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <span class="material-symbols-outlined text-[17px]">add</span>
+          <span>เพิ่มรายการใหม่</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filter Segmented Pills (Dynamic from Database) -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-1" id="categoryFilterContainer">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- Items Grid Section -->
+    <div id="itemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden py-16 text-center space-y-3">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-stone-100 dark:bg-white/5 flex items-center justify-center text-stone-400">
+        <span class="material-symbols-outlined text-3xl">search_off</span>
+      </div>
+      <div class="text-sm font-semibold text-stone-600 dark:text-stone-300">ไม่พบข้อมูลที่ตรงกับเงื่อนไข</div>
+      <p class="text-xs text-stone-400">ลองเปลี่ยนคำค้นหา หรือกดปุ่ม "เพิ่มรายการใหม่" เพื่อบันทึกข้อมูลแรก</p>
+    </div>
+
+  </main>
+
+  <!-- ======================================================== -->
+  <!-- 4. MODAL: ADD / EDIT ITEM                                -->
+  <!-- ======================================================== -->
+  <div id="itemModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="max-w-lg w-full bg-white dark:bg-[#161619] rounded-3xl p-6 border border-black/[0.08] dark:border-white/[0.08] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-stone-200 dark:border-white/10 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-[#e85a2d]/10 text-[#e85a2d] flex items-center justify-center">
+            <span class="material-symbols-outlined text-[18px]">vpn_key</span>
+          </div>
+          <h2 class="text-base font-bold text-[#1d1d1f] dark:text-white" id="itemModalTitle">เพิ่มรายการใหม่</h2>
+        </div>
+        <button onclick="closeItemModal()" class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 p-1">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="itemForm" onsubmit="saveItem(event)" class="space-y-3.5 text-xs">
+        <input type="hidden" id="itemId" value="" />
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">หมวดหมู่ <span class="text-red-500">*</span></label>
+          <select id="itemCategoryId" required class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none">
+            <!-- Injected via JS -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">ชื่อบริการ / ระบบ <span class="text-red-500">*</span></label>
+          <input type="text" id="itemTitle" required placeholder="เช่น Gemini Pro Account #1, Spaceship Domains" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">อีเมล / Username / User ID</label>
+          <input type="text" id="itemUsername" placeholder="เช่น iamjotaki@gmail.com หรือ ubuntu" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-medium text-stone-700 dark:text-stone-300">รหัสผ่าน / API Key / Secret Token</label>
+            <button type="button" onclick="generateRandomPassword()" class="text-[11px] text-[#0071e3] hover:underline flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[13px]">casino</span> สุ่มรหัสผ่าน
+            </button>
+          </div>
+          <div class="relative">
+            <input type="password" id="itemPassword" placeholder="••••••••••••" class="w-full py-2 pl-3 pr-10 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 font-mono text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+            <button type="button" onclick="togglePasswordInput('itemPassword')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200">
+              <span class="material-symbols-outlined text-[17px]" id="itemPasswordToggleIcon">visibility</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">เว็บไซต์ URL</label>
+          <input type="url" id="itemUrl" placeholder="https://..." class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">วันหมดอายุ / วันตัดรอบบิล</label>
+          <input type="date" id="itemExpiresAt" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">หมายเหตุ / ข้อมูลเพิ่มเติม</label>
+          <textarea id="itemNotes" rows="3" placeholder="เช่น ใช้บัตรเครดิตใบไหน, คีย์เซิร์ฟเวอร์เก็บไว้ที่ไหน, พอร์ตอะไร" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="itemIsFavorite" class="w-4 h-4 rounded text-[#e85a2d] focus:ring-[#e85a2d]" />
+          <label for="itemIsFavorite" class="font-medium text-stone-700 dark:text-stone-300 cursor-pointer">ติดดาวเป็นรายการโปรด (แสดงด้านบนสุด)</label>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-stone-200 dark:border-white/10">
+          <button type="button" onclick="closeItemModal()" class="px-4 py-2 rounded-xl bg-stone-200 hover:bg-stone-300 dark:bg-white/10 dark:hover:bg-white/15 text-stone-700 dark:text-stone-300 font-semibold">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#e85a2d] hover:bg-[#d64f24] text-white font-semibold shadow-xs">
+            บันทึกข้อมูล
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 5. MODAL: CATEGORY MANAGER (เพิ่ม / แก้ไข / ลบ หมวดหมู่)    -->
+  <!-- ======================================================== -->
+  <div id="categoryManagerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="max-w-xl w-full bg-white dark:bg-[#161619] rounded-3xl p-6 border border-black/[0.08] dark:border-white/[0.08] shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-stone-200 dark:border-white/10 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-[#0071e3]/10 text-[#0071e3] flex items-center justify-center">
+            <span class="material-symbols-outlined text-[18px]">folder_managed</span>
+          </div>
+          <h2 class="text-base font-bold text-[#1d1d1f] dark:text-white">จัดการหมวดหมู่ (Categories)</h2>
+        </div>
+        <button onclick="closeCategoryManagerModal()" class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 p-1">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Add / Edit Category Form -->
+      <form id="categoryForm" onsubmit="saveCategory(event)" class="bg-stone-50 dark:bg-white/[0.03] p-4 rounded-2xl border border-stone-200 dark:border-white/10 space-y-3 text-xs">
+        <div class="font-bold text-stone-800 dark:text-stone-200" id="categoryFormTitle">
+          + เพิ่มหมวดหมู่ใหม่
+        </div>
+        <input type="hidden" id="editCategoryId" value="" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">ชื่อหมวดหมู่ <span class="text-red-500">*</span></label>
+            <input type="text" id="catName" required placeholder="เช่น โดเมน, บัญชี AI, ธนาคาร" class="w-full py-2 px-3 rounded-xl bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#0071e3] focus:outline-none" />
+          </div>
+
+          <div>
+            <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">ไอคอน (Material Symbol)</label>
+            <select id="catIcon" class="w-full py-2 px-3 rounded-xl bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#0071e3] focus:outline-none">
+              <option value="language">🌐 language (โดเมน/เว็บ)</option>
+              <option value="smart_toy">🤖 smart_toy (AI/บอท)</option>
+              <option value="cloud">☁️ cloud (คลาวด์/เซิร์ฟเวอร์)</option>
+              <option value="key">🔑 key (รหัสผ่าน/คีย์)</option>
+              <option value="credit_card">💳 credit_card (บัตร/การเงิน)</option>
+              <option value="mail">✉️ mail (อีเมล)</option>
+              <option value="database">🗄️ database (ฐานข้อมูล)</option>
+              <option value="shield">🛡️ shield (ความปลอดภัย)</option>
+              <option value="terminal">💻 terminal (คำสั่ง/สคริปต์)</option>
+              <option value="folder">📁 folder (โฟลเดอร์ทั่วไป)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">สีประจำหมวดหมู่</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="catColor" value="#0071e3" class="w-10 h-8 rounded-lg cursor-pointer border border-stone-200 dark:border-white/10 bg-transparent p-0.5" />
+              <span class="text-[11px] text-stone-400">เลือกสีเพื่อจำแนกการแสดงผล</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">ลำดับการแสดงผล</label>
+            <input type="number" id="catSortOrder" value="0" class="w-full py-2 px-3 rounded-xl bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#0071e3] focus:outline-none" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">คำอธิบายหมวดหมู่ (ไม่บังคับ)</label>
+          <input type="text" id="catDescription" placeholder="เช่น บัญชี AI และ API keys สำหรับงานระบบ" class="w-full py-2 px-3 rounded-xl bg-white dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#0071e3] focus:outline-none" />
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="btnCancelCatEdit" onclick="resetCategoryForm()" class="hidden px-3 py-1.5 rounded-lg bg-stone-200 dark:bg-white/10 text-stone-700 dark:text-stone-300">
+            ยกเลิกแก้ไข
+          </button>
+          <button type="submit" class="px-4 py-1.5 rounded-lg bg-[#0071e3] hover:bg-[#0062c4] text-white font-semibold">
+            บันทึกหมวดหมู่
+          </button>
+        </div>
+      </form>
+
+      <!-- Category List Table -->
+      <div class="space-y-2">
+        <div class="text-xs font-bold text-stone-500 uppercase tracking-wider">รายการหมวดหมู่ที่มีอยู่:</div>
+        <div id="categoryManagerList" class="space-y-2">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 6. MODAL: CHANGE PIN / SECURITY SETTINGS                 -->
+  <!-- ======================================================== -->
+  <div id="pinModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-white dark:bg-[#161619] rounded-3xl p-6 border border-black/[0.08] dark:border-white/[0.08] shadow-2xl space-y-4">
+      
+      <div class="flex items-center justify-between border-b border-stone-200 dark:border-white/10 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[18px]">key</span>
+          </div>
+          <h2 class="text-base font-bold text-[#1d1d1f] dark:text-white">เปลี่ยนรหัส Master PIN</h2>
+        </div>
+        <button onclick="closePinModal()" class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 p-1">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="changePinForm" onsubmit="submitChangePin(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">รหัส PIN ปัจจุบัน</label>
+          <input type="password" id="currentPinInput" required placeholder="รหัสปัจจุบัน (ค่าเริ่มต้น: 2026)" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">รหัส PIN ใหม่ (อย่างน้อย 4 หลัก)</label>
+          <input type="password" id="newPinInput" required minlength="4" placeholder="ป้อนรหัส PIN ใหม่" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div>
+          <label class="block font-medium text-stone-700 dark:text-stone-300 mb-1">ยืนยันรหัส PIN ใหม่</label>
+          <input type="password" id="confirmPinInput" required minlength="4" placeholder="ป้อนรหัส PIN ใหม่อีกครั้ง" class="w-full py-2 px-3 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-[#1d1d1f] dark:text-white focus:ring-2 focus:ring-[#e85a2d] focus:outline-none" />
+        </div>
+
+        <div id="changePinMsg" class="hidden text-xs font-medium"></div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-stone-200 dark:border-white/10">
+          <button type="button" onclick="closePinModal()" class="px-4 py-2 rounded-xl bg-stone-200 dark:bg-white/10 text-stone-700 dark:text-stone-300 font-semibold">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-[#e85a2d] hover:bg-[#d64f24] text-white font-semibold">
+            บันทึกรหัสใหม่
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 7. MODAL: BACKUP & RESTORE JSON                          -->
+  <!-- ======================================================== -->
+  <div id="backupModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="max-w-md w-full bg-white dark:bg-[#161619] rounded-3xl p-6 border border-black/[0.08] dark:border-white/[0.08] shadow-2xl space-y-5 text-xs">
+      
+      <div class="flex items-center justify-between border-b border-stone-200 dark:border-white/10 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[18px]">backup</span>
+          </div>
+          <h2 class="text-base font-bold text-[#1d1d1f] dark:text-white">สำรองข้อมูล & กู้คืน (Backup)</h2>
+        </div>
+        <button onclick="closeBackupModal()" class="text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 p-1">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <!-- Export Section -->
+      <div class="p-4 rounded-2xl bg-stone-50 dark:bg-white/[0.03] border border-stone-200 dark:border-white/10 space-y-2">
+        <div class="font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-emerald-500 text-[18px]">download</span>
+          <span>ดาวน์โหลดไฟล์สำรองข้อมูล (Export JSON)</span>
+        </div>
+        <p class="text-stone-500 dark:text-stone-400 text-[11px]">
+          ดาวน์โหลดข้อมูลบัญชี รหัสผ่าน และหมวดหมู่ทั้งหมดเก็บไว้ในเครื่องของคุณ ป้องกันข้อมูลสูญหาย
+        </p>
+        <button onclick="downloadBackup()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold flex items-center justify-center gap-1.5 shadow-xs">
+          <span class="material-symbols-outlined text-[16px]">file_download</span>
+          <span>ดาวน์โหลด Backup ตอนนี้</span>
+        </button>
+      </div>
+
+      <!-- Import Section -->
+      <div class="p-4 rounded-2xl bg-stone-50 dark:bg-white/[0.03] border border-stone-200 dark:border-white/10 space-y-2">
+        <div class="font-bold text-stone-800 dark:text-stone-200 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[#0071e3] text-[18px]">upload</span>
+          <span>นำเข้าข้อมูลจากไฟล์สำรอง (Import JSON)</span>
+        </div>
+        <p class="text-stone-500 dark:text-stone-400 text-[11px]">
+          เลือกไฟล์ .json ที่เคยบันทึกไว้ เพื่อกู้คืนหมวดหมู่และรายการข้อมูลทั้งหมด
+        </p>
+        <input type="file" id="backupFileInput" accept=".json" class="w-full text-stone-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#0071e3] file:text-white hover:file:bg-[#0062c4] cursor-pointer" />
+        <button onclick="uploadBackup()" class="w-full py-2.5 rounded-xl bg-stone-200 dark:bg-white/10 hover:bg-stone-300 dark:hover:bg-white/20 text-[#1d1d1f] dark:text-white font-semibold flex items-center justify-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">publish</span>
+          <span>นำเข้าข้อมูล (Import)</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-[#161619] text-white px-4 py-3 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-2.5 text-xs font-medium animate-bounce">
+    <span class="material-symbols-outlined text-emerald-400 text-[18px]" id="toastIcon">check_circle</span>
+    <span id="toastMsg">คัดลอกเรียบร้อยแล้ว</span>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 8. JAVASCRIPT APPLICATION LOGIC                          -->
+  <!-- ======================================================== -->
+  <script>
+    let vaultToken = localStorage.getItem('thaid_vault_token') || '';
+    let categories = [];
+    let items = [];
+    let activeCategoryFilter = null; // null = all
+    let showFavoritesOnly = false;
+
+    // --- Toast Notification ---
+    function showToast(msg, icon = 'check_circle', color = 'emerald') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      toastMsg.innerText = msg;
+      toastIcon.innerText = icon;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2500);
+    }
+
+    // --- Theme Toggle ---
+    function toggleDarkMode() {
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        localStorage.setItem('thaid-theme', 'light');
+        document.getElementById('themeIcon').innerText = 'dark_mode';
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        localStorage.setItem('thaid-theme', 'dark');
+        document.getElementById('themeIcon').innerText = 'light_mode';
+      }
+    }
+
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobileDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // --- Auth & PIN Handlers ---
+    async function checkAuthStatus() {
+      try {
+        const res = await fetch('/api/auth/status', {
+          headers: { 'x-vault-token': vaultToken }
+        });
+        const data = await res.json();
+        if (data.unlocked) {
+          document.getElementById('pinLockScreen').classList.add('hidden');
+          loadData();
+        } else {
+          document.getElementById('pinLockScreen').classList.remove('hidden');
+          setTimeout(() => document.getElementById('pinInput').focus(), 100);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function submitPin(e) {
+      e.preventDefault();
+      const pin = document.getElementById('pinInput').value.trim();
+      const errorDiv = document.getElementById('pinErrorMsg');
+      if (!pin) return;
+
+      try {
+        const res = await fetch('/api/auth/verify-pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errorDiv.innerText = data.detail || 'รหัส PIN ไม่ถูกต้อง';
+          errorDiv.classList.remove('hidden');
+          return;
+        }
+        vaultToken = data.token;
+        localStorage.setItem('thaid_vault_token', vaultToken);
+        document.getElementById('pinInput').value = '';
+        errorDiv.classList.add('hidden');
+        document.getElementById('pinLockScreen').classList.add('hidden');
+        loadData();
+        showToast('ปลดล็อกคลังข้อมูลสำเร็จ', 'lock_open');
+      } catch (err) {
+        errorDiv.innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+        errorDiv.classList.remove('hidden');
+      }
+    }
+
+    async function lockVault() {
+      try {
+        await fetch('/api/auth/lock', {
+          method: 'POST',
+          headers: { 'x-vault-token': vaultToken }
+        });
+      } catch (e) {}
+      vaultToken = '';
+      localStorage.removeItem('thaid_vault_token');
+      document.getElementById('pinLockScreen').classList.remove('hidden');
+      document.getElementById('pinInput').value = '';
+      setTimeout(() => document.getElementById('pinInput').focus(), 100);
+      showToast('ล็อกคลังข้อมูลแล้ว', 'lock');
+    }
+
+    // --- Load Data ---
+    async function loadData() {
+      await loadCategories();
+      await loadItems();
+    }
+
+    async function loadCategories() {
+      try {
+        const res = await fetch('/api/categories', {
+          headers: { 'x-vault-token': vaultToken }
+        });
+        if (res.status === 401) {
+          lockVault();
+          return;
+        }
+        categories = await res.json();
+        document.getElementById('statTotalCategories').innerText = categories.length;
+        renderCategoryFilter();
+        renderCategorySelect();
+        renderCategoryManagerList();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadItems() {
+      try {
+        let url = '/api/items';
+        const params = new URLSearchParams();
+        if (activeCategoryFilter) params.append('category_id', activeCategoryFilter);
+        if (showFavoritesOnly) params.append('favorites_only', 'true');
+        const q = document.getElementById('searchInput').value.trim();
+        if (q) params.append('q', q);
+
+        if (params.toString()) url += '?' + params.toString();
+
+        const res = await fetch(url, {
+          headers: { 'x-vault-token': vaultToken }
+        });
+        if (res.status === 401) {
+          lockVault();
+          return;
+        }
+        items = await res.json();
+        
+        // Update stats
+        document.getElementById('statTotalItems').innerText = items.length;
+        const favCount = items.filter(i => i.is_favorite === 1).length;
+        document.getElementById('statFavorites').innerText = favCount;
+
+        renderItems();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // --- Render Category Filter Pills ---
+    function renderCategoryFilter() {
+      const container = document.getElementById('categoryFilterContainer');
+      let html = `
+        <button
+          onclick="setCategoryFilter(null)"
+          class="flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${activeCategoryFilter === null && !showFavoritesOnly ? 'bg-[#e85a2d] text-white shadow-xs' : 'bg-white dark:bg-[#161619] text-stone-600 dark:text-stone-300 border border-black/[0.06] dark:border-white/[0.08] hover:bg-stone-100 dark:hover:bg-white/10'}"
+        >
+          <span class="material-symbols-outlined text-[15px]">apps</span>
+          <span>ทั้งหมด</span>
+        </button>
+
+        <button
+          onclick="toggleFavoritesFilter()"
+          class="flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${showFavoritesOnly ? 'bg-amber-500 text-white shadow-xs' : 'bg-white dark:bg-[#161619] text-stone-600 dark:text-stone-300 border border-black/[0.06] dark:border-white/[0.08] hover:bg-stone-100 dark:hover:bg-white/10'}"
+        >
+          <span class="material-symbols-outlined text-[15px] material-symbols-fill">star</span>
+          <span>รายการโปรด</span>
+        </button>
+      `;
+
+      categories.forEach(cat => {
+        const isActive = activeCategoryFilter === cat.id && !showFavoritesOnly;
+        html += `
+          <button
+            onclick="setCategoryFilter(${cat.id})"
+            class="flex-shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${isActive ? 'bg-[#0071e3] text-white shadow-xs' : 'bg-white dark:bg-[#161619] text-stone-600 dark:text-stone-300 border border-black/[0.06] dark:border-white/[0.08] hover:bg-stone-100 dark:hover:bg-white/10'}"
+          >
+            <span class="material-symbols-outlined text-[15px]" style="color: ${isActive ? '#ffffff' : cat.color}">${cat.icon}</span>
+            <span>${cat.name}</span>
+            <span class="ml-1 text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-stone-100 dark:bg-white/10 text-stone-500 dark:text-stone-400'}">${cat.item_count || 0}</span>
+          </button>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function setCategoryFilter(catId) {
+      activeCategoryFilter = catId;
+      showFavoritesOnly = false;
+      renderCategoryFilter();
+      loadItems();
+    }
+
+    function toggleFavoritesFilter() {
+      showFavoritesOnly = !showFavoritesOnly;
+      if (showFavoritesOnly) activeCategoryFilter = null;
+      renderCategoryFilter();
+      loadItems();
+    }
+
+    function handleSearch() {
+      loadItems();
+    }
+
+    // --- Render Items Grid ---
+    function renderItems() {
+      const container = document.getElementById('itemsContainer');
+      const emptyState = document.getElementById('emptyState');
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      let html = '';
+
+      items.forEach(item => {
+        const isFav = item.is_favorite === 1;
+        const color = item.category_color || '#0071e3';
+        const hasUrl = item.url && item.url.trim().length > 0;
+        const hasPw = item.password && item.password.trim().length > 0;
+        const hasUser = item.username && item.username.trim().length > 0;
+
+        html += `
+          <div class="bg-white dark:bg-[#161619] rounded-2xl p-5 border border-black/[0.06] dark:border-white/[0.08] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4 group">
+            
+            <!-- Card Header -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <!-- Category Badge -->
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold" style="background-color: ${color}15; color: ${color}; border: 1px solid ${color}30;">
+                  <span class="material-symbols-outlined text-[14px]">${item.category_icon || 'folder'}</span>
+                  <span>${item.category_name}</span>
+                </div>
+
+                <!-- Favorite & Actions -->
+                <div class="flex items-center gap-1">
+                  <button onclick="toggleFavorite(${item.id})" class="p-1 rounded-lg text-stone-400 hover:text-amber-500 transition-colors" title="รายการโปรด">
+                    <span class="material-symbols-outlined text-[19px] ${isFav ? 'text-amber-500 material-symbols-fill' : ''}">star</span>
+                  </button>
+                  <button onclick="editItem(${item.id})" class="p-1 rounded-lg text-stone-400 hover:text-[#0071e3] transition-colors" title="แก้ไข">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button onclick="deleteItem(${item.id})" class="p-1 rounded-lg text-stone-400 hover:text-rose-500 transition-colors" title="ลบ">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Title & Expiry -->
+              <div>
+                <h3 class="text-base font-bold text-[#1d1d1f] dark:text-white leading-snug group-hover:text-[#e85a2d] transition-colors">
+                  ${escapeHtml(item.title)}
+                </h3>
+                ${item.expires_at ? `
+                  <div class="text-[10px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1 mt-0.5">
+                    <span class="material-symbols-outlined text-[12px]">event_repeat</span>
+                    <span>หมดอายุ/ต่ออายุ: ${item.expires_at}</span>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Card Body: Credentials -->
+            <div class="space-y-2 text-xs">
+              
+              <!-- Username Field -->
+              ${hasUser ? `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-stone-100 dark:bg-white/[0.04] border border-stone-200/60 dark:border-white/[0.05]">
+                  <div class="flex items-center gap-2 overflow-hidden mr-2">
+                    <span class="material-symbols-outlined text-stone-400 text-[16px] flex-shrink-0">person</span>
+                    <span class="text-stone-800 dark:text-stone-200 font-mono truncate select-all">${escapeHtml(item.username)}</span>
+                  </div>
+                  <button onclick="copyToClipboard('${escapeJs(item.username)}', 'คัดลอก Username แล้ว!')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-white flex-shrink-0" title="คัดลอก Username">
+                    <span class="material-symbols-outlined text-[16px]">content_copy</span>
+                  </button>
+                </div>
+              ` : ''}
+
+              <!-- Password / Secret Field -->
+              ${hasPw ? `
+                <div class="flex items-center justify-between p-2 rounded-xl bg-stone-100 dark:bg-white/[0.04] border border-stone-200/60 dark:border-white/[0.05]">
+                  <div class="flex items-center gap-2 overflow-hidden mr-2">
+                    <span class="material-symbols-outlined text-stone-400 text-[16px] flex-shrink-0">key</span>
+                    <span id="pw_display_${item.id}" class="text-stone-800 dark:text-stone-200 font-mono tracking-wider truncate select-all">••••••••••••</span>
+                  </div>
+                  <div class="flex items-center gap-1 flex-shrink-0">
+                    <button onclick="toggleCardPassword(${item.id}, '${escapeJs(item.password)}')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-white" title="ดูรหัสผ่าน">
+                      <span class="material-symbols-outlined text-[16px]" id="pw_icon_${item.id}">visibility</span>
+                    </button>
+                    <button onclick="copyToClipboard('${escapeJs(item.password)}', 'คัดลอกรหัสผ่านแล้ว!')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-white" title="คัดลอกรหัสผ่าน">
+                      <span class="material-symbols-outlined text-[16px]">content_copy</span>
+                    </button>
+                  </div>
+                </div>
+              ` : ''}
+
+              <!-- Notes -->
+              ${item.notes ? `
+                <div class="p-2.5 rounded-xl bg-stone-50 dark:bg-white/[0.02] text-stone-500 dark:text-stone-400 text-[11px] leading-relaxed break-words">
+                  ${escapeHtml(item.notes)}
+                </div>
+              ` : ''}
+
+            </div>
+
+            <!-- Card Footer: URL Link -->
+            ${hasUrl ? `
+              <div class="pt-2 border-t border-stone-100 dark:border-white/[0.05] flex items-center justify-between">
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-[#0071e3] hover:underline flex items-center gap-1">
+                  <span>เปิดเว็บไซต์</span>
+                  <span class="material-symbols-outlined text-[13px]">open_in_new</span>
+                </a>
+                <span class="text-[10px] text-stone-400 truncate max-w-[150px] font-mono">${item.url.replace(/^https?:\/\//, '')}</span>
+              </div>
+            ` : '<div class="pt-1"></div>'}
+
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    function toggleCardPassword(id, rawPw) {
+      const span = document.getElementById(`pw_display_${id}`);
+      const icon = document.getElementById(`pw_icon_${id}`);
+      if (span.innerText === '••••••••••••') {
+        span.innerText = rawPw;
+        icon.innerText = 'visibility_off';
+      } else {
+        span.innerText = '••••••••••••';
+        icon.innerText = 'visibility';
+      }
+    }
+
+    function copyToClipboard(text, msg = 'คัดลอกแล้ว') {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(msg, 'check_circle');
+      }).catch(err => {
+        console.error(err);
+      });
+    }
+
+    // --- Item Modal & CRUD ---
+    function renderCategorySelect() {
+      const select = document.getElementById('itemCategoryId');
+      select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    function openItemModal(itemId = null) {
+      document.getElementById('itemModal').classList.remove('hidden');
+      renderCategorySelect();
+      if (!itemId) {
+        document.getElementById('itemModalTitle').innerText = 'เพิ่มรายการใหม่';
+        document.getElementById('itemId').value = '';
+        document.getElementById('itemForm').reset();
+        if (activeCategoryFilter) document.getElementById('itemCategoryId').value = activeCategoryFilter;
+      }
+    }
+
+    function closeItemModal() {
+      document.getElementById('itemModal').classList.add('hidden');
+    }
+
+    function editItem(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      openItemModal(id);
+      document.getElementById('itemModalTitle').innerText = 'แก้ไขรายการ';
+      document.getElementById('itemId').value = item.id;
+      document.getElementById('itemCategoryId').value = item.category_id;
+      document.getElementById('itemTitle').value = item.title;
+      document.getElementById('itemUsername').value = item.username || '';
+      document.getElementById('itemPassword').value = item.password || '';
+      document.getElementById('itemUrl').value = item.url || '';
+      document.getElementById('itemExpiresAt').value = item.expires_at || '';
+      document.getElementById('itemNotes').value = item.notes || '';
+      document.getElementById('itemIsFavorite').checked = item.is_favorite === 1;
+    }
+
+    async function saveItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('itemId').value;
+      const data = {
+        category_id: parseInt(document.getElementById('itemCategoryId').value),
+        title: document.getElementById('itemTitle').value.trim(),
+        username: document.getElementById('itemUsername').value.trim(),
+        password: document.getElementById('itemPassword').value.trim(),
+        url: document.getElementById('itemUrl').value.trim(),
+        expires_at: document.getElementById('itemExpiresAt').value,
+        notes: document.getElementById('itemNotes').value.trim(),
+        is_favorite: document.getElementById('itemIsFavorite').checked ? 1 : 0
+      };
+
+      try {
+        const url = id ? `/api/items/${id}` : '/api/items';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-vault-token': vaultToken
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || 'เกิดข้อผิดพลาดในการบันทึก');
+          return;
+        }
+
+        closeItemModal();
+        await loadCategories();
+        await loadItems();
+        showToast(id ? 'อัปเดตข้อมูลเรียบร้อย' : 'เพิ่มรายการใหม่เรียบร้อย', 'save');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function deleteItem(id) {
+      if (!confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?')) return;
+      try {
+        const res = await fetch(`/api/items/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-vault-token': vaultToken }
+        });
+        if (res.ok) {
+          await loadCategories();
+          await loadItems();
+          showToast('ลบรายการเรียบร้อยแล้ว', 'delete');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function toggleFavorite(id) {
+      try {
+        const res = await fetch(`/api/items/${id}/favorite`, {
+          method: 'POST',
+          headers: { 'x-vault-token': vaultToken }
+        });
+        if (res.ok) {
+          loadItems();
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function togglePasswordInput(inputId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById('itemPasswordToggleIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.innerText = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.innerText = 'visibility';
+      }
+    }
+
+    function generateRandomPassword() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~|}{[]';
+      let pw = '';
+      for (let i = 0; i < 16; i++) {
+        pw += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      const input = document.getElementById('itemPassword');
+      input.value = pw;
+      input.type = 'text';
+      document.getElementById('itemPasswordToggleIcon').innerText = 'visibility_off';
+      showToast('สร้างรหัสผ่านสุ่ม 16 ตัวอักษรแล้ว', 'casino');
+    }
+
+    // --- Category Manager Handlers (เพิ่ม / ลบ / แก้ไข หมวดหมู่) ---
+    function openCategoryManagerModal() {
+      document.getElementById('categoryManagerModal').classList.remove('hidden');
+      resetCategoryForm();
+      renderCategoryManagerList();
+    }
+
+    function closeCategoryManagerModal() {
+      document.getElementById('categoryManagerModal').classList.add('hidden');
+    }
+
+    function resetCategoryForm() {
+      document.getElementById('editCategoryId').value = '';
+      document.getElementById('categoryForm').reset();
+      document.getElementById('catColor').value = '#0071e3';
+      document.getElementById('catSortOrder').value = '0';
+      document.getElementById('categoryFormTitle').innerText = '+ เพิ่มหมวดหมู่ใหม่';
+      document.getElementById('btnCancelCatEdit').classList.add('hidden');
+    }
+
+    function renderCategoryManagerList() {
+      const container = document.getElementById('categoryManagerList');
+      if (!categories || categories.length === 0) {
+        container.innerHTML = '<div class="text-xs text-stone-400">ยังไม่มีหมวดหมู่</div>';
+        return;
+      }
+
+      let html = '';
+      categories.forEach(cat => {
+        html += `
+          <div class="flex items-center justify-between p-3 rounded-xl bg-stone-100 dark:bg-white/[0.04] border border-stone-200/60 dark:border-white/[0.05]">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white" style="background-color: ${cat.color}">
+                <span class="material-symbols-outlined text-[18px]">${cat.icon || 'folder'}</span>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-[#1d1d1f] dark:text-white flex items-center gap-2">
+                  <span>${escapeHtml(cat.name)}</span>
+                  <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-200 dark:bg-white/10 text-stone-500">${cat.item_count || 0} รายการ</span>
+                </div>
+                ${cat.description ? `<div class="text-[10px] text-stone-400">${escapeHtml(cat.description)}</div>` : ''}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button onclick="editCategory(${cat.id})" class="p-1 rounded-lg text-stone-400 hover:text-[#0071e3] transition-colors" title="แก้ไขหมวดหมู่">
+                <span class="material-symbols-outlined text-[17px]">edit</span>
+              </button>
+              <button onclick="deleteCategory(${cat.id}, '${escapeJs(cat.name)}', ${cat.item_count || 0})" class="p-1 rounded-lg text-stone-400 hover:text-rose-500 transition-colors" title="ลบหมวดหมู่">
+                <span class="material-symbols-outlined text-[17px]">delete</span>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function editCategory(id) {
+      const cat = categories.find(c => c.id === id);
+      if (!cat) return;
+      document.getElementById('editCategoryId').value = cat.id;
+      document.getElementById('catName').value = cat.name;
+      document.getElementById('catIcon').value = cat.icon || 'folder';
+      document.getElementById('catColor').value = cat.color || '#0071e3';
+      document.getElementById('catDescription').value = cat.description || '';
+      document.getElementById('catSortOrder').value = cat.sort_order || 0;
+      document.getElementById('categoryFormTitle').innerText = '✏️ แก้ไขหมวดหมู่: ' + cat.name;
+      document.getElementById('btnCancelCatEdit').classList.remove('hidden');
+    }
+
+    async function saveCategory(e) {
+      e.preventDefault();
+      const id = document.getElementById('editCategoryId').value;
+      const data = {
+        name: document.getElementById('catName').value.trim(),
+        icon: document.getElementById('catIcon').value,
+        color: document.getElementById('catColor').value,
+        description: document.getElementById('catDescription').value.trim(),
+        sort_order: parseInt(document.getElementById('catSortOrder').value) || 0
+      };
+
+      try {
+        const url = id ? `/api/categories/${id}` : '/api/categories';
+        const method = id ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-vault-token': vaultToken
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || 'เกิดข้อผิดพลาดในการบันทึกหมวดหมู่');
+          return;
+        }
+
+        resetCategoryForm();
+        await loadCategories();
+        showToast(id ? 'อัปเดตหมวดหมู่เรียบร้อย' : 'เพิ่มหมวดหมู่ใหม่เรียบร้อย', 'folder');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function deleteCategory(id, name, itemCount) {
+      let promptMsg = `คุณแน่ใจหรือไม่ว่าต้องการลบหมวดหมู่ '${name}'?`;
+      if (itemCount > 0) {
+        promptMsg += `\n⚠️ คำเตือน: มีข้อมูลอยู่ ${itemCount} รายการในหมวดหมู่นี้ ซึ่งจะถูกลบไปด้วยทั้งหมด!`;
+      }
+      if (!confirm(promptMsg)) return;
+
+      try {
+        const res = await fetch(`/api/categories/${id}`, {
+          method: 'DELETE',
+          headers: { 'x-vault-token': vaultToken }
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          alert(err.detail || 'ไม่สามารถลบหมวดหมู่ได้');
+          return;
+        }
+        await loadCategories();
+        await loadItems();
+        showToast('ลบหมวดหมู่เรียบร้อยแล้ว', 'delete');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // --- Change PIN Handlers ---
+    function openPinModal() {
+      document.getElementById('pinModal').classList.remove('hidden');
+      document.getElementById('changePinForm').reset();
+      document.getElementById('changePinMsg').classList.add('hidden');
+    }
+
+    function closePinModal() {
+      document.getElementById('pinModal').classList.add('hidden');
+    }
+
+    async function submitChangePin(e) {
+      e.preventDefault();
+      const current_pin = document.getElementById('currentPinInput').value.trim();
+      const new_pin = document.getElementById('newPinInput').value.trim();
+      const confirm_pin = document.getElementById('confirmPinInput').value.trim();
+      const msgDiv = document.getElementById('changePinMsg');
+
+      if (new_pin !== confirm_pin) {
+        msgDiv.innerText = 'รหัส PIN ใหม่ไม่ตรงกัน กรุณาตรวจสอบ';
+        msgDiv.className = 'text-xs font-medium text-rose-500';
+        msgDiv.classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/set-pin', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-vault-token': vaultToken
+          },
+          body: JSON.stringify({ current_pin, new_pin })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          msgDiv.innerText = data.detail || 'เกิดข้อผิดพลาดในการเปลี่ยนรหัส';
+          msgDiv.className = 'text-xs font-medium text-rose-500';
+          msgDiv.classList.remove('hidden');
+          return;
+        }
+
+        msgDiv.innerText = data.message;
+        msgDiv.className = 'text-xs font-medium text-emerald-500';
+        msgDiv.classList.remove('hidden');
+        setTimeout(() => {
+          closePinModal();
+          showToast('เปลี่ยนรหัส PIN สำเร็จแล้ว', 'verified');
+        }, 1200);
+      } catch (err) {
+        msgDiv.innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+        msgDiv.className = 'text-xs font-medium text-rose-500';
+        msgDiv.classList.remove('hidden');
+      }
+    }
+
+    // --- Backup & Restore Handlers ---
+    function openBackupModal() {
+      document.getElementById('backupModal').classList.remove('hidden');
+    }
+
+    function closeBackupModal() {
+      document.getElementById('backupModal').classList.add('hidden');
+    }
+
+    async function downloadBackup() {
+      try {
+        const res = await fetch('/api/backup/export', {
+          headers: { 'x-vault-token': vaultToken }
+        });
+        if (!res.ok) {
+          alert('ไม่สามารถดาวน์โหลดได้ กรุณาลองใหม่');
+          return;
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `thaid_vault_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        showToast('ดาวน์โหลดไฟล์สำรองข้อมูลสำเร็จ', 'download');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function uploadBackup() {
+      const fileInput = document.getElementById('backupFileInput');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('กรุณาเลือกไฟล์ .json ก่อน');
+        return;
+      }
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const json = JSON.parse(e.target.result);
+          const res = await fetch('/api/backup/import', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-vault-token': vaultToken
+            },
+            body: JSON.stringify(json)
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            alert(data.detail || 'ไม่สามารถนำเข้าข้อมูลได้');
+            return;
+          }
+          closeBackupModal();
+          await loadCategories();
+          await loadItems();
+          showToast(data.message || 'นำเข้าข้อมูลสำเร็จ', 'cloud_done');
+        } catch (err) {
+          alert('ไฟล์ที่เลือกไม่ใช่ JSON ที่ถูกต้อง');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // --- Utility Functions ---
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeJs(str) {
+      if (!str) return '';
+      return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    // --- On Page Load ---
+    window.addEventListener('DOMContentLoaded', () => {
+      checkAuthStatus();
+    });
+  </script>
+</body>
+</html>
