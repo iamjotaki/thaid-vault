@@ -185,7 +185,12 @@
           <span class="material-symbols-outlined text-[18px]">lock_open</span>
           <span>ปลดล็อกคลังข้อมูล</span>
         </button>
+        <button type="button" onclick="document.getElementById('pinInput').value='2026'; submitPin(new Event('submit'))" class="w-full py-2.5 px-4 rounded-full bg-[#0569ff]/10 hover:bg-[#0569ff]/20 text-[#0569ff] text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+          <span class="material-symbols-outlined text-[15px]">key</span>
+          <span>⚡ คลิกเพื่อปลดล็อกด้วย PIN 2026 ทันที</span>
+        </button>
       </form>
+      <p class="text-[11px] text-stone-400">PIN เริ่มต้นระบบ: <span class="font-mono font-bold text-[#171717]">2026</span></p>
 
       <div class="text-[11px] text-[#737373] dark:text-stone-500">
         🛡️ ข้อมูลในคลังถูกเข้ารหัสแบบ AES-256 ปลอดภัยระดับสูงสุด
