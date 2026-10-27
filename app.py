@@ -164,7 +164,7 @@ def init_db():
                 cat_hosting,
                 "Coolify Control Panel (Server Dashboard)",
                 "iamjotaki@gmail.com",
-                encrypt_secret("ThaiD2026!Admin", conn),
+                encrypt_secret("", conn),
                 "http://thaid.online:8000",
                 "แผงควบคุมระบบคลาวด์และคอนเทนเนอร์ ThaiD Ecosystem ควบคุม thaid.online, novel.thaid.online, social.thaid.online พอร์ต 8000",
                 "",
