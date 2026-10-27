@@ -14,7 +14,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from cryptography.fernet import Fernet
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "vault.db")
+
+# Resilient persistent storage resolution:
+# If /app/data volume exists, use /app/data/vault.db. If not yet seeded, copy baseline vault.db into it.
+DATA_DIR = os.path.join(BASE_DIR, "data")
+if os.path.isdir(DATA_DIR):
+    DATA_DB = os.path.join(DATA_DIR, "vault.db")
+    BASE_DB = os.path.join(BASE_DIR, "vault.db")
+    if not os.path.exists(DATA_DB) and os.path.exists(BASE_DB):
+        import shutil
+        shutil.copy2(BASE_DB, DATA_DB)
+    DB_PATH = DATA_DB if os.path.exists(DATA_DB) else BASE_DB
+else:
+    DB_PATH = os.path.join(BASE_DIR, "vault.db")
 
 app = FastAPI(title="ThaiD Personal Vault", version="1.0.0")
 
