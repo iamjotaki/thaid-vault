@@ -40,6 +40,7 @@ app.add_middleware(
 
 # Active Sessions: token -> expires_at
 active_sessions: Dict[str, datetime] = {}
+failed_attempts: Dict[str, list] = {}  # ip -> list of timestamps
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -275,7 +276,19 @@ def auth_status(x_vault_token: Optional[str] = Header(None)):
     return {"unlocked": is_unlocked, "vault_title": title}
 
 @app.post("/api/auth/verify-pin")
-def verify_pin(data: VerifyPinRequest):
+def verify_pin(data: VerifyPinRequest, request: Request):
+    import time
+    client_ip = request.client.host if request.client else "unknown"
+    now = datetime.now()
+
+    # Brute-force protection: check failed attempts in last 10 minutes
+    attempts = failed_attempts.get(client_ip, [])
+    attempts = [t for t in attempts if now - t < timedelta(minutes=10)]
+    failed_attempts[client_ip] = attempts
+
+    if len(attempts) >= 5:
+        raise HTTPException(status_code=429, detail="คุณใส่รหัสผิดเกิน 5 ครั้ง ระบบถูกล็อกชั่วคราวเป็นเวลา 15 นาที เพื่อความปลอดภัยสูงสุด")
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT value FROM settings WHERE key = 'master_pin_salt'")
@@ -285,10 +298,16 @@ def verify_pin(data: VerifyPinRequest):
     conn.close()
 
     if hash_pin(data.pin, salt) != stored_hash:
-        raise HTTPException(status_code=400, detail="รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง")
+        # Record failed attempt and sleep 1s to slow down brute force
+        failed_attempts[client_ip].append(now)
+        time.sleep(1)
+        remaining = 5 - len(failed_attempts[client_ip])
+        raise HTTPException(status_code=400, detail=f"รหัส PIN ไม่ถูกต้อง (เหลือโอกาส {max(0, remaining)} ครั้งก่อนระบบล็อก)")
 
+    # Successful login: reset failed attempts
+    failed_attempts[client_ip] = []
     token = secrets.token_hex(24)
-    active_sessions[token] = datetime.now() + timedelta(minutes=30)
+    active_sessions[token] = datetime.now() + timedelta(minutes=60)
     return {"token": token, "message": "ปลดล็อกสำเร็จ"}
 
 @app.post("/api/auth/set-pin")

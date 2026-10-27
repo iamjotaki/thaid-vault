@@ -132,119 +132,11 @@
         <div class="flex items-center gap-1.5">
           <span class="font-bold text-xl tracking-tight text-[#2b313b]">ThaiD</span>
           <span class="text-xs text-stone-300 font-light">/</span>
-          <span class="text-xs font-semibold text-[#5e6675]">Security Vault</span>
+          <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Personal Private Vault 🔒</span>
         </div>
       </a>
 
       <!-- Zone 2: Center - SaaS Services Selector Dropdown -->
-      <div class="relative" id="thaidSaasDropdownWrap">
-        <button
-          type="button"
-          onclick="toggleThaiDSaasMenu()"
-          class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full border border-black/[0.08] bg-white/90 hover:bg-white text-xs font-semibold text-[#2b313b] transition-all shadow-2xs hover:border-black/[0.2] cursor-pointer"
-        >
-          <span class="text-[#0569ff] font-bold text-xs">✦</span>
-          <span>เลือกบริการ SaaS</span>
-          <svg id="thaidSaasChevron" width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" class="text-stone-400 transition-transform duration-200">
-            <path d="m4.5 6 3.5 3.5L11.5 6" />
-          </svg>
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div id="thaidSaasMenu" class="hidden absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 sm:w-80 bg-white/95 backdrop-blur-2xl border border-black/[0.08] rounded-2xl shadow-2xl p-2 z-50 text-left">
-          <div class="px-3 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider border-b border-black/[0.05] mb-1 flex items-center justify-between">
-            <span>ThaiD SaaS Ecosystem</span>
-            <span class="text-emerald-600 font-semibold">7 เครื่องมือ</span>
-          </div>
-          <div class="grid grid-cols-1 gap-1 max-h-[380px] overflow-y-auto">
-            <a href="https://novel.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-[#0569ff]">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">Novel Studio</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">แต่งนิยาย AI 10 ตอนจบ</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">10 ตอนจบ</span>
-            </a>
-            <a href="https://social.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-emerald-600">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">Social Auto-Poster</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">ดึงข่าว RSS & โพสต์ Facebook 24 ชม.</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">Auto 24h</span>
-            </a>
-            <a href="https://vault.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-amber-500">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">Personal Vault</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">คลังเก็บรหัสผ่าน & API Keys ส่วนตัว</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">AES-256</span>
-            </a>
-            <a href="https://sticker.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-pink-500">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">LINE Sticker Creator</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สร้างชุดสติกเกอร์ไลน์ 40 แอ็กชัน</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">40 แอ็กชัน</span>
-            </a>
-            <a href="https://clip.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-purple-500">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">Clip AI & Reels</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สคริปต์คลิปสั้น 9:16 สไตล์ไวรัล</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">9:16 Shorts</span>
-            </a>
-            <a href="https://chat.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-teal-600">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">Smart Chat AI</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">บอทแอดมินตอบแชทบน LINE OA 24/7</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">ตอบ 0.8 วิ</span>
-            </a>
-            <a href="https://mockup.thaid.online" class="flex items-center justify-between p-2 rounded-xl hover:bg-stone-50 transition-colors group text-left">
-              <div class="flex items-center gap-2.5">
-                <div class="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 text-blue-500">
-                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                </div>
-                <div class="text-left">
-                  <div class="text-xs font-bold text-[#171717] group-hover:text-[#0569ff] transition-colors">Mockup Studio</div>
-                  <div class="text-[10px] text-stone-400 truncate max-w-[170px]">สตูดิโอภาพถ่ายสินค้าลักชัวรี ไดคัต AI</div>
-                </div>
-              </div>
-              <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 font-medium">Studio 4K</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
       <!-- Zone 3: Right - Sub Home Link & Far Right Login/Profile -->
       <div class="flex items-center gap-2 flex-shrink-0">
         <!-- Sub Home Link -->
@@ -340,7 +232,7 @@
           <input
             type="password"
             id="pinInput"
-            placeholder="ป้อนรหัส PIN (เริ่มต้น: 2026)"
+            placeholder="ป้อนรหัส PIN ส่วนตัว"
             maxlength="20"
             autofocus
             class="w-full text-center text-xl tracking-[0.3em] font-mono py-3.5 px-4 rounded-xl bg-stone-100 dark:bg-white/5 border border-stone-300 dark:border-black/[0.08] text-white focus:outline-none focus:ring-2 focus:ring-[#0569ff] transition-all"
@@ -355,13 +247,7 @@
           <span class="material-symbols-outlined text-[18px]">lock_open</span>
           <span>ปลดล็อกคลังข้อมูล</span>
         </button>
-        <button type="button" onclick="document.getElementById('pinInput').value='2026'; submitPin(new Event('submit'))" class="w-full py-2.5 px-4 rounded-full bg-[#0569ff]/10 hover:bg-[#0569ff]/20 text-[#0569ff] text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-          <span class="material-symbols-outlined text-[15px]">key</span>
-          <span>⚡ คลิกเพื่อปลดล็อกด้วย PIN 2026 ทันที</span>
-        </button>
-      </form>
-      <p class="text-[11px] text-stone-400">PIN เริ่มต้นระบบ: <span class="font-mono font-bold text-[#171717]">2026</span></p>
-
+        </form>
       <div class="text-[11px] text-[#737373] dark:text-stone-500">
         🛡️ ข้อมูลในคลังถูกเข้ารหัสแบบ AES-256 ปลอดภัยระดับสูงสุด
       </div>
