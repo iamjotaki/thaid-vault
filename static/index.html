@@ -1533,20 +1533,6 @@
   </div>
 
   <script>
-    function toggleThaiDSaasMenu() {
-      const menu = document.getElementById('thaidSaasMenu');
-      const chev = document.getElementById('thaidSaasChevron');
-      if (!menu) return;
-      const isHidden = menu.classList.contains('hidden');
-      if (isHidden) {
-        menu.classList.remove('hidden');
-        if (chev) chev.classList.add('rotate-180');
-      } else {
-        menu.classList.add('hidden');
-        if (chev) chev.classList.remove('rotate-180');
-      }
-    }
-
     function toggleThaiDProfileMenu() {
       const menu = document.getElementById('thaidProfileMenu');
       const chev = document.getElementById('thaidProfileChevron');
@@ -1624,13 +1610,7 @@
     }
 
     document.addEventListener('click', function(e) {
-      const saasWrap = document.getElementById('thaidSaasDropdownWrap');
-      const saasMenu = document.getElementById('thaidSaasMenu');
-      const saasChev = document.getElementById('thaidSaasChevron');
-      if (saasWrap && saasMenu && !saasWrap.contains(e.target)) {
-        saasMenu.classList.add('hidden');
-        if (saasChev) saasChev.classList.remove('rotate-180');
-      }
+      
 
       const profWrap = document.getElementById('thaidProfileWrap');
       const profMenu = document.getElementById('thaidProfileMenu');
