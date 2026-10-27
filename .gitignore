@@ -5,3 +5,7 @@ __pycache__/
 *.log
 .DS_Store
 vault.db-journal
+
+*.db
+*.mp3
+
