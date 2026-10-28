@@ -1756,6 +1756,100 @@
       }
     }
 
+    
+    function renderThaiDProfileMenu(user) {
+      const container = document.getElementById('thaidProfileMenuContent');
+      if (!container) return;
+
+      const isSuperAdmin = user.role === 'superadmin' || user.email === 'iamjotaki@gmail.com';
+      const subs = user.subscriptions || [];
+
+      let statusBadgeHtml = '';
+      if (isSuperAdmin) {
+        statusBadgeHtml = '<span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold text-[10px] border border-purple-200/50">👑 Super Admin (All Access)</span>';
+      } else if (subs.length > 0) {
+        statusBadgeHtml = `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-200/50">Active (${subs.length} แอป)</span>`;
+      } else {
+        statusBadgeHtml = '<span class="px-2 py-0.5 rounded-full bg-stone-200/80 text-stone-600 font-bold text-[10px]">Free Member (ยังไม่มีแพ็กเกจ)</span>';
+      }
+
+      const allApps = [
+        { slug: 'novel', name: 'Novel Studio', url: 'https://novel.thaid.online' },
+        { slug: 'social', name: 'Social Poster', url: 'https://social.thaid.online/dashboard' },
+        { slug: 'vault', name: 'Vault Storage', url: 'https://vault.thaid.online' },
+        { slug: 'sticker', name: 'Sticker Studio', url: 'https://sticker.thaid.online' },
+        { slug: 'clip', name: 'Clip AI Shorts', url: 'https://clip.thaid.online' },
+        { slug: 'chat', name: 'Smart Chat AI', url: 'https://chat.thaid.online' },
+        { slug: 'mockup', name: 'Mockup Studio', url: 'https://mockup.thaid.online' },
+      ];
+
+      let adminLinkHtml = '';
+      if (isSuperAdmin) {
+        adminLinkHtml = `
+          <a href="https://thaid.online/admin" class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 font-semibold text-xs transition-colors border border-purple-200/60 mb-2">
+            <span class="flex items-center gap-1.5">
+              <span>⚙️</span>
+              <span>ศูนย์กลางแอดมิน (Central Admin)</span>
+            </span>
+            <span class="text-[10px] text-purple-600">→</span>
+          </a>
+        `;
+      }
+
+      let appsHtml = '';
+      if (isSuperAdmin) {
+        appsHtml = allApps.map(app => `
+          <a href="${app.url}" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-700 text-xs transition-colors">
+            <span class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>${app.name}</span>
+            </span>
+            <span class="text-[10px] text-stone-400">→</span>
+          </a>
+        `).join('');
+      } else if (subs.length > 0) {
+        const activeApps = allApps.filter(app => subs.includes(app.slug));
+        appsHtml = activeApps.map(app => `
+          <a href="${app.url}" class="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-stone-50 text-stone-700 text-xs transition-colors">
+            <span class="flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>${app.name}</span>
+            </span>
+            <span class="text-[10px] text-stone-400">→</span>
+          </a>
+        `).join('');
+      } else {
+        appsHtml = `
+          <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200/60 text-left space-y-1.5">
+            <div class="text-[11px] font-bold text-amber-900 flex items-center gap-1">
+              <span>⚠️</span>
+              <span>ยังไม่มีบริการที่สมัครสมาชิก</span>
+            </div>
+            <p class="text-[10px] text-amber-700 leading-snug">
+              กรุณาสมัครสมาชิกรายเดือน/รายปี หรือซื้อเครดิต เพื่อเข้าใช้งานแอปที่คุณต้องการ
+            </p>
+            <a href="https://thaid.online#pricing" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#0569ff] hover:underline">
+              ดูแพ็กเกจและราคา →
+            </a>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="flex items-center justify-between px-2 py-1.5 rounded-xl bg-stone-50 border border-black/[0.04] mb-2">
+          <span class="text-stone-500 font-medium">สถานะ:</span>
+          ${statusBadgeHtml}
+        </div>
+        ${adminLinkHtml}
+        <div class="space-y-1">
+          <div class="px-1 text-[10px] uppercase font-bold text-stone-400 tracking-wider">
+            บริการที่คุณสมัครใช้งานแล้ว
+          </div>
+          ${appsHtml}
+        </div>
+      `;
+    }
+
     function syncThaiDUserState() {
       const loginBtn = document.getElementById('thaidLoginBtn');
       const profWrap = document.getElementById('thaidProfileWrap');
@@ -1789,6 +1883,7 @@
           if (avL) avL.src = user.avatar || '';
           if (nmL) nmL.textContent = user.name || '';
           if (emL) emL.textContent = user.email || '';
+          renderThaiDProfileMenu(user);
         }
       } else {
         if (loginBtn) loginBtn.classList.remove('hidden');
