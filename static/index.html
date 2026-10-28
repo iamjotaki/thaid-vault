@@ -1741,14 +1741,9 @@
         } catch (e) {}
       }
 
-      // 2. Fallback to localStorage if cookie not found
+      // 2. If wildcard cookie is absent (logged out globally), purge local cache
       if (!user) {
-        const raw = localStorage.getItem('thaid_user');
-        if (raw) {
-          try {
-            user = JSON.parse(raw);
-          } catch (e) {}
-        }
+        localStorage.removeItem('thaid_user');
       }
 
       if (user) {
