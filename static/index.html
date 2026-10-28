@@ -1659,8 +1659,16 @@
     }
 
     function getThaiDCookie(name) {
-      const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-      return match ? decodeURIComponent(match[3]) : null;
+      const match = document.cookie.match(new RegExp('(^|;\s*)(' + name + ')=([^;]*)'));
+      if (!match) return null;
+      let val = match[3];
+      try {
+        val = decodeURIComponent(val);
+        if (typeof val === 'string' && val.startsWith('%')) {
+          val = decodeURIComponent(val);
+        }
+      } catch (e) {}
+      return val;
     }
 
     function openThaiDAuthModal() {
@@ -1733,10 +1741,10 @@
 
       // 1. Try reading the SSO wildcard cookie (set on .thaid.online)
       let user = null;
-      const cookieVal = getThaiDCookie('thaid_user');
+      let cookieVal = getThaiDCookie('thaid_user');
       if (cookieVal) {
         try {
-          user = JSON.parse(cookieVal);
+          if (typeof cookieVal === 'string' && cookieVal.startsWith('%')) cookieVal = decodeURIComponent(cookieVal); user = JSON.parse(cookieVal);
           localStorage.setItem('thaid_user', JSON.stringify(user));
         } catch (e) {}
       }
