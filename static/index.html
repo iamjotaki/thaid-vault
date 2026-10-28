@@ -319,7 +319,7 @@
       </div>
 
       <div class="space-y-1">
-        <h1 class="text-2xl font-bold tracking-tight text-white">ThaiD Personal Vault</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-[#171717]">ThaiD Personal Vault</h1>
         <p class="text-xs text-stone-500 dark:text-[#737373]">ป้อนรหัส PIN เพื่อเข้าถึงข้อมูลสำคัญและรหัสผ่านส่วนตัว</p>
       </div>
 
@@ -364,7 +364,7 @@
         </div>
         <div>
           <div class="text-xs text-stone-500 dark:text-[#737373] font-medium">รายการทั้งหมด</div>
-          <div class="text-xl font-bold tracking-tight text-white" id="statTotalItems">0</div>
+          <div class="text-xl font-bold tracking-tight text-[#171717]" id="statTotalItems">0</div>
         </div>
       </div>
 
@@ -374,7 +374,7 @@
         </div>
         <div>
           <div class="text-xs text-stone-500 dark:text-[#737373] font-medium">หมวดหมู่</div>
-          <div class="text-xl font-bold tracking-tight text-white" id="statTotalCategories">0</div>
+          <div class="text-xl font-bold tracking-tight text-[#171717]" id="statTotalCategories">0</div>
         </div>
       </div>
 
@@ -384,7 +384,7 @@
         </div>
         <div>
           <div class="text-xs text-stone-500 dark:text-[#737373] font-medium">รายการโปรด</div>
-          <div class="text-xl font-bold tracking-tight text-white" id="statFavorites">0</div>
+          <div class="text-xl font-bold tracking-tight text-[#171717]" id="statFavorites">0</div>
         </div>
       </div>
 
@@ -476,7 +476,7 @@
           <div class="w-8 h-8 rounded-lg bg-[#0569ff]/10 text-[#0569ff] flex items-center justify-center">
             <span class="material-symbols-outlined text-[18px]">vpn_key</span>
           </div>
-          <h2 class="text-base font-bold text-white" id="itemModalTitle">เพิ่มรายการใหม่</h2>
+          <h2 class="text-base font-bold text-[#171717]" id="itemModalTitle">เพิ่มรายการใหม่</h2>
         </div>
         <button onclick="closeItemModal()" class="text-[#737373] hover:text-stone-600 dark:hover:text-stone-200 p-1">
           <span class="material-symbols-outlined text-[20px]">close</span>
@@ -561,7 +561,7 @@
           <div class="w-8 h-8 rounded-lg bg-[#1f242d]/10 text-[#0569ff] flex items-center justify-center">
             <span class="material-symbols-outlined text-[18px]">folder_managed</span>
           </div>
-          <h2 class="text-base font-bold text-white">จัดการหมวดหมู่ (Categories)</h2>
+          <h2 class="text-base font-bold text-[#171717]">จัดการหมวดหมู่ (Categories)</h2>
         </div>
         <button onclick="closeCategoryManagerModal()" class="text-[#737373] hover:text-stone-600 dark:hover:text-stone-200 p-1">
           <span class="material-symbols-outlined text-[20px]">close</span>
@@ -650,7 +650,7 @@
           <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center">
             <span class="material-symbols-outlined text-[18px]">key</span>
           </div>
-          <h2 class="text-base font-bold text-white">เปลี่ยนรหัส Master PIN</h2>
+          <h2 class="text-base font-bold text-[#171717]">เปลี่ยนรหัส Master PIN</h2>
         </div>
         <button onclick="closePinModal()" class="text-[#737373] hover:text-stone-600 dark:hover:text-stone-200 p-1">
           <span class="material-symbols-outlined text-[20px]">close</span>
@@ -699,7 +699,7 @@
           <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
             <span class="material-symbols-outlined text-[18px]">backup</span>
           </div>
-          <h2 class="text-base font-bold text-white">สำรองข้อมูล & กู้คืน (Backup)</h2>
+          <h2 class="text-base font-bold text-[#171717]">สำรองข้อมูล & กู้คืน (Backup)</h2>
         </div>
         <button onclick="closeBackupModal()" class="text-[#737373] hover:text-stone-600 dark:hover:text-stone-200 p-1">
           <span class="material-symbols-outlined text-[20px]">close</span>
@@ -1016,7 +1016,7 @@
 
               <!-- Title & Expiry -->
               <div>
-                <h3 class="text-base font-bold text-white leading-snug group-hover:text-[#0569ff] transition-colors">
+                <h3 class="text-base font-bold text-[#171717] leading-snug group-hover:text-[#0569ff] transition-colors">
                   ${escapeHtml(item.title)}
                 </h3>
                 ${item.expires_at ? `
@@ -1279,7 +1279,7 @@
                 <span class="material-symbols-outlined text-[18px]">${cat.icon || 'folder'}</span>
               </div>
               <div>
-                <div class="text-xs font-bold text-white flex items-center gap-2">
+                <div class="text-xs font-bold text-[#171717] flex items-center gap-2">
                   <span>${escapeHtml(cat.name)}</span>
                   <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-stone-200 dark:bg-white/10 text-stone-500">${cat.item_count || 0} รายการ</span>
                 </div>
