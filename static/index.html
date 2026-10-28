@@ -1576,7 +1576,7 @@
       <!-- Google Account OAuth Sign-In -->
       <div class="pt-2">
         <a
-          href="https://thaid.online/api/auth/google"
+          href="https://thaid.online/api/auth/google" onclick="this.href='https://thaid.online/api/auth/google?from='+encodeURIComponent(window.location.href)"
           class="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-2xl border border-black/[0.12] hover:border-black/[0.25] bg-white hover:bg-stone-50 text-[#1f1f1f] text-xs font-semibold shadow-xs transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
         >
           <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
@@ -1680,18 +1680,7 @@
       }
     }
 
-    function getThaiDCookie(name) {
-      const match = document.cookie.match(new RegExp('(^|;\s*)(' + name + ')=([^;]*)'));
-      if (!match) return null;
-      let val = match[3];
-      try {
-        val = decodeURIComponent(val);
-        if (typeof val === 'string' && val.startsWith('%')) {
-          val = decodeURIComponent(val);
-        }
-      } catch (e) {}
-      return val;
-    }
+    
 
     function openThaiDAuthModal() {
       const modal = document.getElementById('thaidAuthModal');
@@ -1703,69 +1692,145 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    async function thaiDLogin(name, email, avatar, role, plan) {
-      const user = {
-        name,
-        email,
-        avatar,
-        role: role || (email.includes('admin') ? 'admin' : 'member'),
-        plan: plan || (role === 'admin' ? 'VIP Enterprise' : 'Free Trial')
-      };
-      localStorage.setItem('thaid_user', JSON.stringify(user));
-      syncThaiDUserState();
-      closeThaiDAuthModal();
+    
+      if (!user) {
+        const match = document.cookie.match(/(^|;\s*)thaid_user=([^;]*)/);
+        if (match && match[2]) {
+          try {
+            let decoded = decodeURIComponent(match[2]);
+            if (decoded.startsWith('%')) decoded = decodeURIComponent(decoded);
+            user = JSON.parse(decoded);
+          } catch (e) {}
+        }
+      }
 
-      // Broadcast to Central SSO Authority to issue Domain=.thaid.online wildcard cookies
-      try {
-        await fetch('https://thaid.online/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({ name, email, avatar, role, plan })
-        });
-      } catch (err) {
-        console.warn('SSO Cookie sync note:', err);
+      if (!user) {
+        if (typeof openAuthModal === 'function') {
+          openAuthModal();
+        } else {
+          window.location.href = 'https://thaid.online';
+        }
+        return false;
+      }
+
+      const isSuperAdmin = user.role === 'superadmin' || user.email === 'iamjotaki@gmail.com';
+      if (isSuperAdmin) {
+        return true;
+      }
+
+      const subs = user.subscriptions || [];
+      if (subs.includes(targetSlug)) {
+        return true;
+      }
+
+      showThaiDPaywallModal(targetName, user.email || 'Free Member');
+      return false;
+    }
+
+    function showThaiDPaywallModal(appName, userEmail) {
+      let modal = document.getElementById('thaidPaywallModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'thaidPaywallModal';
+        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4';
+        modal.innerHTML = `
+          <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-black/[0.08] p-6 text-center animate-in fade-in zoom-in-95 duration-200">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
+              🔒
+            </div>
+            <h3 class="text-lg font-bold text-[#171717] mb-1" id="thaidPaywallTitle">
+              ปลดล็อกบริการ ${appName}
+            </h3>
+            <p class="text-xs text-stone-600 leading-relaxed mb-4" id="thaidPaywallDesc">
+              บริการนี้สำหรับสมาชิกที่สมัครแพ็กเกจรายเดือน รายปี หรือซื้อเครดิตแล้วเท่านั้น<br>
+              บัญชีของคุณ (<span class="font-bold text-stone-800" id="thaidPaywallUserEmail">${userEmail}</span>) ยังไม่ได้เปิดใช้งานบริการนี้
+            </p>
+
+            <div class="space-y-2 mb-5 text-left">
+              <div class="p-3 rounded-2xl bg-stone-50 border border-black/[0.06] flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-stone-800">แพ็กเกจสมาชิกรายเดือน / รายปี</div>
+                  <div class="text-[10px] text-stone-500">ใช้งานไม่จำกัดตลอดอายุสมาชิก</div>
+                </div>
+                <span class="text-xs font-bold text-[#0569ff]">เริ่มต้น ฿290/ด.</span>
+              </div>
+              <div class="p-3 rounded-2xl bg-stone-50 border border-black/[0.06] flex items-center justify-between">
+                <div>
+                  <div class="text-xs font-bold text-stone-800">เติมเครดิตตามการใช้งาน</div>
+                  <div class="text-[10px] text-stone-500">ซื้อเครดิตตามจำนวนครั้ง ไม่มีหมดอายุ</div>
+                </div>
+                <span class="text-xs font-bold text-emerald-600">เริ่มต้น ฿99</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2">
+              <a href="https://thaid.online#pricing" class="flex-1 py-2.5 px-4 rounded-xl bg-[#0569ff] hover:bg-[#0051cc] text-white text-xs font-bold shadow-md transition-all text-center flex items-center justify-center gap-1.5">
+                <span>ดูแพ็กเกจและชำระเงิน</span>
+                <span>→</span>
+              </a>
+              <button type="button" onclick="closeThaiDPaywallModal()" class="py-2.5 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-all">
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      } else {
+        document.getElementById('thaidPaywallTitle').innerText = 'ปลดล็อกบริการ ' + appName;
+        document.getElementById('thaidPaywallUserEmail').innerText = userEmail;
+        modal.classList.remove('hidden');
       }
     }
 
-    function handleThaiDEmailLogin(e) {
-      e.preventDefault();
-      const input = document.getElementById('thaidEmailInput');
-      const val = input ? input.value.trim() : '';
-      if (val) {
-        const name = val.split('@')[0];
-        thaiDLogin(name, val, 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + encodeURIComponent(name));
-      }
+    function closeThaiDPaywallModal() {
+      const modal = document.getElementById('thaidPaywallModal');
+      if (modal) modal.classList.add('hidden');
     }
 
-    async function thaiDLogout() {
-      localStorage.removeItem('thaid_user');
-      document.cookie = 'thaid_session=; Path=/; Domain=.thaid.online; Max-Age=0;';
-      document.cookie = 'thaid_user=; Path=/; Domain=.thaid.online; Max-Age=0;';
-      syncThaiDUserState();
-      const pMenu = document.getElementById('thaidProfileMenu');
-      if (pMenu) pMenu.classList.add('hidden');
+    
 
-      // Inform Central SSO Authority to clear HttpOnly session cookie
-      try {
-        await fetch('https://thaid.online/api/auth/logout', {
-          method: 'POST',
-          credentials: 'include'
-        });
-      } catch (err) {
-        console.warn('SSO logout network note:', err);
+    
+
+    document.addEventListener('click', function(e) {
+      
+
+      const profWrap = document.getElementById('thaidProfileWrap');
+      const profMenu = document.getElementById('thaidProfileMenu');
+      const profChev = document.getElementById('thaidProfileChevron');
+      if (profWrap && profMenu && !profWrap.contains(e.target)) {
+        profMenu.classList.add('hidden');
+        if (profChev) profChev.classList.remove('rotate-180');
       }
-    }
+    });
 
+    
     
     
 
     
     // ========================================================
-    // ThaiD Dynamic Subscriptions & Paywall Entitlement Engine
+    // BULLETPROOF CENTRAL SSO CLIENT ENGINE (Wildcard Cookie)
     // ========================================================
     const CURRENT_APP_SLUG = "vault";
     const CURRENT_APP_NAME = "Vault Storage";
+
+    function getThaiDCookie(name) {
+      if (typeof document === 'undefined' || !document.cookie) return null;
+      const prefix = name + '=';
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i].trim();
+        if (c.indexOf(prefix) === 0) {
+          let val = c.substring(prefix.length);
+          try {
+            val = decodeURIComponent(val);
+            if (typeof val === 'string' && val.startsWith('%')) val = decodeURIComponent(val);
+          } catch (e) {}
+          return val;
+        }
+      }
+      return null;
+    }
 
     function renderThaiDProfileMenu(user) {
       const container = document.getElementById('thaidProfileMenuContent');
@@ -1865,24 +1930,22 @@
       const targetName = appName || CURRENT_APP_NAME;
 
       let user = null;
-      const raw = localStorage.getItem('thaid_user');
-      if (raw) {
-        try { user = JSON.parse(raw); } catch (e) {}
+      const cookieVal = getThaiDCookie('thaid_user');
+      if (cookieVal) {
+        try {
+          user = typeof cookieVal === 'string' ? JSON.parse(cookieVal) : cookieVal;
+        } catch (e) {}
       }
       if (!user) {
-        const match = document.cookie.match(/(^|;\s*)thaid_user=([^;]*)/);
-        if (match && match[2]) {
-          try {
-            let decoded = decodeURIComponent(match[2]);
-            if (decoded.startsWith('%')) decoded = decodeURIComponent(decoded);
-            user = JSON.parse(decoded);
-          } catch (e) {}
+        const raw = localStorage.getItem('thaid_user');
+        if (raw) {
+          try { user = JSON.parse(raw); } catch (e) {}
         }
       }
 
-      if (!user) {
-        if (typeof openAuthModal === 'function') {
-          openAuthModal();
+      if (!user || !user.email) {
+        if (typeof openThaiDAuthModal === 'function') {
+          openThaiDAuthModal();
         } else {
           window.location.href = 'https://thaid.online';
         }
@@ -1967,22 +2030,32 @@
       const loginBtn = document.getElementById('thaidLoginBtn');
       const profWrap = document.getElementById('thaidProfileWrap');
 
-      // 1. Try reading the SSO wildcard cookie (set on .thaid.online)
+      // 1. Read wildcard cookie thaid_user from .thaid.online (Primary Authority)
       let user = null;
-      let cookieVal = getThaiDCookie('thaid_user');
+      const cookieVal = getThaiDCookie('thaid_user');
       if (cookieVal) {
         try {
-          if (typeof cookieVal === 'string' && cookieVal.startsWith('%')) cookieVal = decodeURIComponent(cookieVal); user = JSON.parse(cookieVal);
-          localStorage.setItem('thaid_user', JSON.stringify(user));
-        } catch (e) {}
+          user = typeof cookieVal === 'string' ? JSON.parse(cookieVal) : cookieVal;
+          if (user && user.email) {
+            localStorage.setItem('thaid_user', JSON.stringify(user));
+          }
+        } catch (e) {
+          console.warn('SSO Cookie parse error:', e);
+        }
       }
 
-      // 2. If wildcard cookie is absent (logged out globally), purge local cache
+      // 2. Check localStorage cache if cookie is not yet read
       if (!user) {
-        localStorage.removeItem('thaid_user');
+        const rawLocal = localStorage.getItem('thaid_user');
+        if (rawLocal) {
+          try {
+            user = JSON.parse(rawLocal);
+          } catch (e) {}
+        }
       }
 
-      if (user) {
+      // 3. Render state
+      if (user && user.email) {
         if (loginBtn) loginBtn.classList.add('hidden');
         if (profWrap) {
           profWrap.classList.remove('hidden');
@@ -1991,12 +2064,15 @@
           const avL = document.getElementById('thaidUserAvatarLarge');
           const nmL = document.getElementById('thaidUserNameLarge');
           const emL = document.getElementById('thaidUserEmailLarge');
-          if (av) av.src = user.avatar || '';
-          if (nm) nm.textContent = user.name || '';
-          if (avL) avL.src = user.avatar || '';
-          if (nmL) nmL.textContent = user.name || '';
+          const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.name || 'User')}`;
+          if (av) av.src = user.avatar || defaultAvatar;
+          if (nm) nm.textContent = user.name || 'User';
+          if (avL) avL.src = user.avatar || defaultAvatar;
+          if (nmL) nmL.textContent = user.name || 'User';
           if (emL) emL.textContent = user.email || '';
-          renderThaiDProfileMenu(user);
+          if (typeof renderThaiDProfileMenu === 'function') {
+            renderThaiDProfileMenu(user);
+          }
         }
       } else {
         if (loginBtn) loginBtn.classList.remove('hidden');
@@ -2004,34 +2080,80 @@
       }
     }
 
-    // Auto-verify session with Central SSO in background
+    // Auto-verify session with Central SSO in background (Dual-Sync)
     if (typeof window !== 'undefined') {
       setTimeout(() => {
         fetch('https://thaid.online/api/auth/me', { credentials: 'include' })
           .then(r => r.json())
           .then(d => {
-            if (d && d.ok && d.authenticated && d.user) {
-              localStorage.setItem('thaid_user', JSON.stringify(d.user));
-              syncThaiDUserState();
+            if (d && d.ok) {
+              if (d.authenticated && d.user) {
+                // User is authenticated centrally -> sync and persist
+                localStorage.setItem('thaid_user', JSON.stringify(d.user));
+                document.cookie = 'thaid_user=' + encodeURIComponent(JSON.stringify(d.user)) + '; Path=/; Domain=.thaid.online; Max-Age=2592000; SameSite=lax; Secure';
+                syncThaiDUserState();
+              } else if (d.authenticated === false) {
+                // If server explicitly says not authenticated and session cookie is missing
+                const hasSession = document.cookie.includes('thaid_session=');
+                if (!hasSession) {
+                  localStorage.removeItem('thaid_user');
+                  syncThaiDUserState();
+                }
+              }
             }
           })
           .catch(() => {});
-      }, 300);
+      }, 100);
     }
 
-    document.addEventListener('click', function(e) {
-      
+    async function thaiDLogin(name, email, avatar, role, plan) {
+      const isSuperAdmin = email === 'iamjotaki@gmail.com';
+      const ALL_SERVICES = ['novel', 'social', 'vault', 'sticker', 'clip', 'chat', 'mockup'];
+      const user = {
+        name: isSuperAdmin ? 'Jotaki' : (name || email.split('@')[0]),
+        email,
+        avatar: avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name || 'User')}`,
+        role: isSuperAdmin ? 'superadmin' : (role || 'member'),
+        plan: isSuperAdmin ? 'Owner & Super Admin (All Access)' : (plan || 'Free Member'),
+        credits: isSuperAdmin ? 999999 : 0,
+        subscriptions: isSuperAdmin ? ALL_SERVICES : []
+      };
+      localStorage.setItem('thaid_user', JSON.stringify(user));
+      document.cookie = 'thaid_user=' + encodeURIComponent(JSON.stringify(user)) + '; Path=/; Domain=.thaid.online; Max-Age=2592000; SameSite=lax; Secure';
+      syncThaiDUserState();
+      if (typeof closeThaiDAuthModal === 'function') closeThaiDAuthModal();
 
-      const profWrap = document.getElementById('thaidProfileWrap');
-      const profMenu = document.getElementById('thaidProfileMenu');
-      const profChev = document.getElementById('thaidProfileChevron');
-      if (profWrap && profMenu && !profWrap.contains(e.target)) {
-        profMenu.classList.add('hidden');
-        if (profChev) profChev.classList.remove('rotate-180');
+      // Broadcast to Central SSO Authority
+      try {
+        await fetch('https://thaid.online/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(user)
+        });
+      } catch (err) {
+        console.warn('SSO Cookie sync error:', err);
       }
-    });
+    }
 
-    
+    async function thaiDLogout() {
+      localStorage.removeItem('thaid_user');
+      document.cookie = 'thaid_session=; Path=/; Domain=.thaid.online; Max-Age=0;';
+      document.cookie = 'thaid_user=; Path=/; Domain=.thaid.online; Max-Age=0;';
+      document.cookie = 'thaid_session=; Path=/; Max-Age=0;';
+      document.cookie = 'thaid_user=; Path=/; Max-Age=0;';
+      syncThaiDUserState();
+      const pMenu = document.getElementById('thaidProfileMenu');
+      if (pMenu) pMenu.classList.add('hidden');
+
+      try {
+        await fetch('https://thaid.online/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+      } catch (err) {}
+    }
+
     function initThaiDCookieBanner() {
       if (typeof document === 'undefined') return;
       const consentMatch = document.cookie.match(/(^|;\s*)thaid_cookie_consent=([^;]*)/);
