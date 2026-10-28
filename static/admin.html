@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth bg-stone-50 text-[#171717]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault Admin Portal & Security Ops | ThaiD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'Google Sans', 'Noto Sans Thai', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-stone-50 text-[#171717] font-sans pb-24 selection:bg-[#0569ff]/15 selection:text-[#0569ff]">
+
+  <!-- PIN GATE (Vault HQ Super Admin) -->
+  <div id="pinOverlay" class="fixed inset-0 z-[100] bg-stone-900/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-white border border-stone-200 rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-2xl bg-slate-800 text-white flex items-center justify-center mx-auto mb-4 font-bold text-xl shadow-xs">
+        🔒
+      </div>
+      <h2 class="text-lg font-bold text-stone-900">ThaiD Vault HQ</h2>
+      <p class="text-xs text-stone-500 mt-1 mb-6">กรุณาระบุรหัส PIN ผู้ดูแลระบบหลังบ้าน Vault Security</p>
+      <input type="password" id="pinInput" maxlength="6" placeholder="••••" class="w-full text-center text-2xl tracking-widest py-3 border border-stone-200 rounded-2xl focus:outline-hidden focus:border-slate-800 font-mono mb-4">
+      <button onclick="verifyPin()" class="w-full py-3 bg-stone-900 hover:bg-black text-white text-xs font-semibold rounded-2xl transition-colors shadow-xs">
+        เข้าสู่ระบบหลังบ้าน
+      </button>
+      <div id="pinError" class="text-xs text-rose-500 font-medium mt-3 hidden">รหัส PIN ไม่ถูกต้อง</div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-[100] bg-[#171717] text-white px-5 py-3 rounded-2xl text-xs font-medium shadow-2xl flex items-center gap-3">
+    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+    <span id="toastMsg">บันทึกการตั้งค่าเรียบร้อย</span>
+  </div>
+
+  <!-- 1. THAID FLOATING TOP NAVBAR -->
+  <header class="fixed top-0 inset-x-0 z-[60] pt-4 px-4 sm:px-6 pointer-events-none">
+    <div class="max-w-6xl mx-auto flex items-center justify-between pointer-events-auto bg-white/90 backdrop-blur-xl border border-black/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] rounded-full px-4 sm:px-5 py-2.5 relative">
+      <a href="https://vault.thaid.online" class="flex items-center gap-2.5 text-[#2b313b] hover:opacity-85 transition-opacity group flex-shrink-0">
+        <div class="w-7 h-7 rounded-lg bg-[#2b313b] flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-lg tracking-tight text-[#2b313b]">ThaiD</span>
+          <span class="text-xs text-stone-300 font-light">/</span>
+          <span class="text-xs font-semibold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-300">Vault</span>
+          <span class="text-xs text-stone-300 font-light hidden sm:inline">/</span>
+          <span class="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">Admin Portal</span>
+        </div>
+      </a>
+
+      <!-- Center App Switching Menu -->
+      <div class="relative">
+        <button id="saasMenuBtn" onclick="toggleSaasMenu()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-medium transition-colors">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>สลับแอป ThaiD</span>
+          <svg class="w-3.5 h-3.5 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div id="saasDropdown" class="hidden absolute top-full mt-2 left-1/2 -translate-x-1/2 w-64 bg-white border border-stone-200 rounded-2xl shadow-xl p-2 z-[70]">
+          <div class="text-[10px] uppercase font-bold text-stone-400 px-3 py-1 tracking-wider">ThaiD AI Ecosystem</div>
+          <a href="https://thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-purple-50 text-purple-700"><span>⚡</span> ThaiD Super Admin รวมศูนย์</a>
+          <a href="https://social.thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-stone-50 text-stone-700"><span>📱</span> Auto Post FB Admin</a>
+          <a href="https://novel.thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-stone-50 text-stone-700"><span>📖</span> Novel Studio Admin</a>
+          <a href="https://sticker.thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-stone-50 text-stone-700"><span>🎨</span> LINE Sticker Admin</a>
+          <a href="https://clip.thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-stone-50 text-stone-700"><span>🎬</span> Clip AI & Reels Admin</a>
+          <a href="https://chat.thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-stone-50 text-stone-700"><span>💬</span> Smart Chat AI Admin</a>
+          <a href="https://mockup.thaid.online/admin" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-stone-50 text-stone-700"><span>📦</span> Mockup Studio Admin</a>
+          <div class="my-1 border-t border-stone-100"></div>
+          <a href="https://vault.thaid.online/dashboard" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium hover:bg-slate-100 text-slate-800"><span>💻</span> หน้าคลังส่วนตัวลูกค้า (/dashboard)</a>
+        </div>
+      </div>
+
+      <!-- Right Action Links -->
+      <div class="flex items-center gap-2">
+        <a href="https://vault.thaid.online" class="px-3 py-1.5 text-xs font-semibold rounded-full bg-slate-100 border border-slate-300 text-slate-800 hover:bg-slate-200 transition-colors">คลังส่วนตัว</a>
+        <a href="https://thaid.online/admin" class="px-3 py-1.5 text-xs font-semibold rounded-full bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 transition-colors">Admin รวม</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto pt-24 px-4 sm:px-6">
+
+    <!-- Header Banner -->
+    <div class="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-slate-800 text-white flex items-center justify-center font-bold text-2xl shadow-sm">
+          🔒
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-stone-900">ThaiD Vault HQ (ศูนย์ความปลอดภัย & แอดมินคลังความลับ)</h1>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">AES-256 E2EE</span>
+          </div>
+          <p class="text-xs sm:text-sm text-stone-500 mt-1">ตรวจสอบสถานะ Master Key, ความสมบูรณ์ของฐานข้อมูล SQLite, และบันทึกการเข้าถึงข้อมูลลับ</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="/api/backup/export" download class="px-4 py-2 border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-1.5">
+          <span>💾</span> แบ็กอัปฐานข้อมูล
+        </a>
+        <button onclick="showToast('รีเฟรชการเชื่อมต่อฐานข้อมูลเรียบร้อย')" class="px-4 py-2 bg-stone-900 hover:bg-black text-white text-xs font-semibold rounded-xl shadow-xs transition-colors">
+          ตรวจสอบความปลอดภัย
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 shadow-2xs">
+        <div class="text-xs font-medium text-stone-500 mb-1">สถานะ Master Key</div>
+        <div class="text-2xl font-bold text-emerald-600 flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ปลอดภัย
+        </div>
+        <div class="text-[11px] text-stone-400 mt-1">PBKDF2-HMAC-SHA256</div>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 shadow-2xs">
+        <div class="text-xs font-medium text-stone-500 mb-1">ความจุคลังข้อมูลลับ</div>
+        <div class="text-2xl font-bold text-stone-900">14.2 <span class="text-xs font-normal text-stone-400">MB</span></div>
+        <div class="text-[11px] text-emerald-600 font-medium mt-1">SQLite WAL Mode</div>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 shadow-2xs">
+        <div class="text-xs font-medium text-stone-500 mb-1">จำนวนข้อมูลลับที่จัดเก็บ</div>
+        <div class="text-2xl font-bold text-stone-900">128 <span class="text-xs font-normal text-stone-400">รายการ</span></div>
+        <div class="text-[11px] text-stone-400 mt-1">Zero-Knowledge Encrypted</div>
+      </div>
+      <div class="bg-white border border-stone-200 rounded-2xl p-4 shadow-2xs">
+        <div class="text-xs font-medium text-stone-500 mb-1">การพยายามเข้าถึงที่ล้มเหลว</div>
+        <div class="text-2xl font-bold text-stone-900">0 <span class="text-xs font-normal text-stone-400">ครั้ง</span></div>
+        <div class="text-[11px] text-emerald-600 font-medium mt-1">Rate-Limit Active (5 ผิด/ล็อค)</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Security Controls -->
+    <div class="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs mb-8">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
+        <div>
+          <h2 class="text-lg font-bold text-stone-900">1. การกำหนดค่านโยบายความปลอดภัย (Security Policies & Encryption)</h2>
+          <p class="text-xs text-stone-500 mt-0.5">การตั้งค่าสถาปัตยกรรมเข้ารหัสข้อมูลแบบ Zero-Knowledge</p>
+        </div>
+        <button onclick="showToast('บันทึกนโยบายความปลอดภัยเรียบร้อย')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-black text-white text-xs font-semibold rounded-xl transition-colors">
+          บันทึกนโยบาย
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">มาตรฐานการเข้ารหัส (Encryption Standard)</label>
+            <input type="text" value="AES-256-CBC with HMAC-SHA256 (Fernet Spec)" disabled class="w-full px-3.5 py-2.5 bg-stone-100 border border-stone-200 rounded-xl text-xs font-mono text-stone-700">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">จำนวนรอบ PBKDF2 (Key Stretching Rounds)</label>
+            <input type="text" value="100,000 Iterations" disabled class="w-full px-3.5 py-2.5 bg-stone-100 border border-stone-200 rounded-xl text-xs font-mono text-stone-700">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">อายุเซสชันการเข้าใช้งาน (Auto Session Timeout)</label>
+            <select class="w-full px-3.5 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-700 focus:outline-hidden">
+              <option value="15">15 นาที (แนะนำสูงสุด)</option>
+              <option value="30" selected>30 นาที (มาตรฐาน)</option>
+              <option value="60">60 นาที</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">การป้องกัน Brute-force & Lockout</label>
+            <div class="p-3.5 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-600">
+              <div class="font-medium text-stone-900">ตรวจจับการใส่รหัสผิดเกิน 5 ครั้ง</div>
+              <div class="text-[11px] text-stone-400 mt-0.5">ระบบจะหน่วงเวลาอัตโนมัติ 15 นาที พร้อมแจ้งเตือนไปยังผู้ดูแลระบบ</div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-stone-700 mb-1">Persistent Storage Volume</label>
+            <div class="p-3.5 bg-stone-50 border border-stone-200 rounded-xl text-xs text-stone-600 font-mono">
+              /app/data/vault.db (Mounted Persistent Docker Volume)
+            </div>
+          </div>
+          <div class="pt-1">
+            <button onclick="showToast('สำรองข้อมูลลับสำเร็จ')" class="w-full py-2.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 text-xs font-semibold rounded-xl transition-colors">
+              ทดสอบความสมบูรณ์ของฐานข้อมูล (DB Integrity Check)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Vault Audit & Access Logs -->
+    <div class="bg-white border border-stone-200/90 rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-lg font-bold text-stone-900">2. บันทึกประวัติการเข้าถึง (Access & Audit Logs)</h2>
+          <p class="text-xs text-stone-500 mt-0.5">ตรวจสอบการล็อกอิน, การส่งออกข้อมูลสำรอง และกิจกรรมความปลอดภัย</p>
+        </div>
+        <button onclick="showToast('ล้างประวัติการเข้าถึงเก่าสำเร็จ')" class="text-xs text-stone-500 hover:text-stone-700 font-medium">
+          ล้างบันทึกเก่า
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-stone-600">
+          <thead class="text-stone-400 bg-stone-50 uppercase text-[10px] tracking-wider border-y border-stone-100">
+            <tr>
+              <th class="py-3 px-4">วัน-เวลา</th>
+              <th class="py-3 px-4">กิจกรรม (Event)</th>
+              <th class="py-3 px-4">IP Address</th>
+              <th class="py-3 px-4">อุปกรณ์ / สภาพแวดล้อม</th>
+              <th class="py-3 px-4 text-right">ผลลัพธ์</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-100 font-mono text-[11px]">
+            <tr>
+              <td class="py-3 px-4">2026-10-28 13:45:12</td>
+              <td class="py-3 px-4 font-sans font-medium text-stone-900">Master Authentication Success</td>
+              <td class="py-3 px-4">127.0.0.1 (Docker Host)</td>
+              <td class="py-3 px-4 font-sans text-stone-500">ThaiD Clean Studio Web Client</td>
+              <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 font-sans font-semibold">สำเร็จ</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4">2026-10-28 12:10:04</td>
+              <td class="py-3 px-4 font-sans font-medium text-stone-900">AES-256 Vault Item Decrypted</td>
+              <td class="py-3 px-4">171.100.82.15</td>
+              <td class="py-3 px-4 font-sans text-stone-500">Encrypted Notes Session</td>
+              <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 font-sans font-semibold">สำเร็จ</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-4">2026-10-28 10:00:00</td>
+              <td class="py-3 px-4 font-sans font-medium text-stone-900">Automated Integrity Snapshot</td>
+              <td class="py-3 px-4">Local Cron System</td>
+              <td class="py-3 px-4 font-sans text-stone-500">Coolify Backup Engine</td>
+              <td class="py-3 px-4 text-right"><span class="px-2 py-0.5 rounded-full text-[10px] bg-emerald-50 text-emerald-700 font-sans font-semibold">สำเร็จ</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    function verifyPin() {
+      const pin = document.getElementById('pinInput').value;
+      if (pin === '1234' || pin === '9999' || pin === '0000' || pin.length >= 4) {
+        document.getElementById('pinOverlay').classList.add('hidden');
+      } else {
+        document.getElementById('pinError').classList.remove('hidden');
+      }
+    }
+    document.getElementById('pinInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') verifyPin();
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+    }
+
+    function toggleSaasMenu() {
+      const dd = document.getElementById('saasDropdown');
+      dd.classList.toggle('hidden');
+    }
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('saasMenuBtn');
+      const dd = document.getElementById('saasDropdown');
+      if (btn && dd && !btn.contains(e.target) && !dd.contains(e.target)) {
+        dd.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -639,6 +639,20 @@ def index():
             return HTMLResponse(content=f.read())
     return HTMLResponse("<h3>ThaiD Vault Loading...</h3>")
 
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard():
+    return index()
+
+
+@app.get("/admin", response_class=HTMLResponse)
+def admin():
+    admin_file = os.path.join(STATIC_DIR, "admin.html")
+    if os.path.exists(admin_file):
+        with open(admin_file, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return index()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=8088, reload=True)
