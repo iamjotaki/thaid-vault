@@ -1658,6 +1658,11 @@
       }
     }
 
+    function getThaiDCookie(name) {
+      const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+      return match ? decodeURIComponent(match[3]) : null;
+    }
+
     function openThaiDAuthModal() {
       const modal = document.getElementById('thaidAuthModal');
       if (modal) modal.classList.remove('hidden');
@@ -1668,11 +1673,29 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    function thaiDLogin(name, email, avatar) {
-      const user = { name, email, avatar };
+    async function thaiDLogin(name, email, avatar, role, plan) {
+      const user = {
+        name,
+        email,
+        avatar,
+        role: role || (email.includes('admin') ? 'admin' : 'member'),
+        plan: plan || (role === 'admin' ? 'VIP Enterprise' : 'Free Trial')
+      };
       localStorage.setItem('thaid_user', JSON.stringify(user));
       syncThaiDUserState();
       closeThaiDAuthModal();
+
+      // Broadcast to Central SSO Authority to issue Domain=.thaid.online wildcard cookies
+      try {
+        await fetch('https://thaid.online/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ name, email, avatar, role, plan })
+        });
+      } catch (err) {
+        console.warn('SSO Cookie sync note:', err);
+      }
     }
 
     function handleThaiDEmailLogin(e) {
@@ -1685,39 +1708,83 @@
       }
     }
 
-    function thaiDLogout() {
+    async function thaiDLogout() {
       localStorage.removeItem('thaid_user');
+      document.cookie = 'thaid_session=; Path=/; Domain=.thaid.online; Max-Age=0;';
+      document.cookie = 'thaid_user=; Path=/; Domain=.thaid.online; Max-Age=0;';
       syncThaiDUserState();
       const pMenu = document.getElementById('thaidProfileMenu');
       if (pMenu) pMenu.classList.add('hidden');
+
+      // Inform Central SSO Authority to clear HttpOnly session cookie
+      try {
+        await fetch('https://thaid.online/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+      } catch (err) {
+        console.warn('SSO logout network note:', err);
+      }
     }
 
     function syncThaiDUserState() {
       const loginBtn = document.getElementById('thaidLoginBtn');
       const profWrap = document.getElementById('thaidProfileWrap');
-      const raw = localStorage.getItem('thaid_user');
-      if (raw) {
+
+      // 1. Try reading the SSO wildcard cookie (set on .thaid.online)
+      let user = null;
+      const cookieVal = getThaiDCookie('thaid_user');
+      if (cookieVal) {
         try {
-          const user = JSON.parse(raw);
-          if (loginBtn) loginBtn.classList.add('hidden');
-          if (profWrap) {
-            profWrap.classList.remove('hidden');
-            const av = document.getElementById('thaidUserAvatar');
-            const nm = document.getElementById('thaidUserName');
-            const avL = document.getElementById('thaidUserAvatarLarge');
-            const nmL = document.getElementById('thaidUserNameLarge');
-            const emL = document.getElementById('thaidUserEmailLarge');
-            if (av) av.src = user.avatar || '';
-            if (nm) nm.textContent = user.name || '';
-            if (avL) avL.src = user.avatar || '';
-            if (nmL) nmL.textContent = user.name || '';
-            if (emL) emL.textContent = user.email || '';
-          }
-          return;
-        } catch(e) {}
+          user = JSON.parse(cookieVal);
+          localStorage.setItem('thaid_user', JSON.stringify(user));
+        } catch (e) {}
       }
-      if (loginBtn) loginBtn.classList.remove('hidden');
-      if (profWrap) profWrap.classList.add('hidden');
+
+      // 2. Fallback to localStorage if cookie not found
+      if (!user) {
+        const raw = localStorage.getItem('thaid_user');
+        if (raw) {
+          try {
+            user = JSON.parse(raw);
+          } catch (e) {}
+        }
+      }
+
+      if (user) {
+        if (loginBtn) loginBtn.classList.add('hidden');
+        if (profWrap) {
+          profWrap.classList.remove('hidden');
+          const av = document.getElementById('thaidUserAvatar');
+          const nm = document.getElementById('thaidUserName');
+          const avL = document.getElementById('thaidUserAvatarLarge');
+          const nmL = document.getElementById('thaidUserNameLarge');
+          const emL = document.getElementById('thaidUserEmailLarge');
+          if (av) av.src = user.avatar || '';
+          if (nm) nm.textContent = user.name || '';
+          if (avL) avL.src = user.avatar || '';
+          if (nmL) nmL.textContent = user.name || '';
+          if (emL) emL.textContent = user.email || '';
+        }
+      } else {
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        if (profWrap) profWrap.classList.add('hidden');
+      }
+    }
+
+    // Auto-verify session with Central SSO in background
+    if (typeof window !== 'undefined') {
+      setTimeout(() => {
+        fetch('https://thaid.online/api/auth/me', { credentials: 'include' })
+          .then(r => r.json())
+          .then(d => {
+            if (d && d.ok && d.authenticated && d.user) {
+              localStorage.setItem('thaid_user', JSON.stringify(d.user));
+              syncThaiDUserState();
+            }
+          })
+          .catch(() => {});
+      }, 300);
     }
 
     document.addEventListener('click', function(e) {
