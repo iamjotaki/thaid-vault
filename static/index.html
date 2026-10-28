@@ -1802,10 +1802,72 @@
       }
     });
 
+    
+    function initThaiDCookieBanner() {
+      if (typeof document === 'undefined') return;
+      const consentMatch = document.cookie.match(/(^|;\s*)thaid_cookie_consent=([^;]*)/);
+      const localConsent = localStorage.getItem('thaid_cookie_consent');
+      if (consentMatch || localConsent) return;
+
+      if (document.getElementById('thaidCookieBanner')) return;
+
+      const banner = document.createElement('aside');
+      banner.id = 'thaidCookieBanner';
+      banner.role = 'region';
+      banner.setAttribute('aria-label', 'การแจ้งเตือนการใช้คุกกี้');
+      banner.className = 'fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 md:max-w-xl z-50 bg-white/95 backdrop-blur-xl border border-black/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.18)] rounded-3xl p-5 transition-all duration-500 transform translate-y-10 opacity-0 pointer-events-none text-left';
+      banner.innerHTML = `
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200/60 flex items-center justify-center flex-shrink-0 text-amber-600 shadow-2xs">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+              <path d="M8.5 8.5v.01" /><path d="M16 15.5v.01" /><path d="M12 12v.01" /><path d="M11 17v.01" /><path d="M7 13v.01" />
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-[#171717] tracking-tight">การใช้งานคุกกี้บนเว็บไซต์ (Cookie Notice)</h4>
+              <button type="button" onclick="acceptThaiDCookies('essential')" class="text-stone-400 hover:text-stone-700 p-1 rounded-md text-xs cursor-pointer" title="ปิดการแจ้งเตือน">✕</button>
+            </div>
+            <p class="text-[11px] leading-relaxed text-stone-500">
+              ThaiD Online ใช้คุกกี้เพื่อพัฒนาประสบการณ์การใช้งาน ความปลอดภัย และเชื่อมต่อระบบบัญชี Single Sign-On (SSO) ข้ามทุกบริการในเครือข่ายอย่างปลอดภัย คุณสามารถศึกษารายละเอียดได้ที่ <a href="https://thaid.online" target="_blank" class="text-[#0569ff] hover:underline font-medium inline-block">นโยบายคุกกี้ (PDPA)</a>
+            </p>
+            <div class="flex flex-wrap items-center gap-2 pt-1.5">
+              <button type="button" onclick="acceptThaiDCookies('all')" class="px-4 py-2 rounded-full bg-[#171717] hover:bg-black text-white text-xs font-semibold shadow-2xs transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+                ยอมรับทั้งหมด
+              </button>
+              <button type="button" onclick="acceptThaiDCookies('essential')" class="px-3.5 py-2 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium transition-all cursor-pointer">
+                เฉพาะที่จำเป็น
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(banner);
+
+      setTimeout(() => {
+        banner.classList.remove('translate-y-10', 'opacity-0', 'pointer-events-none');
+        banner.classList.add('translate-y-0', 'opacity-100');
+      }, 700);
+    }
+
+    function acceptThaiDCookies(type) {
+      const domain = window.location.hostname.includes('thaid.online') ? '.thaid.online' : '';
+      const domainStr = domain ? '; domain=' + domain : '';
+      document.cookie = 'thaid_cookie_consent=' + type + '; path=/; max-age=31536000; SameSite=Lax' + domainStr;
+      localStorage.setItem('thaid_cookie_consent', type);
+      const banner = document.getElementById('thaidCookieBanner');
+      if (banner) {
+        banner.classList.remove('translate-y-0', 'opacity-100');
+        banner.classList.add('translate-y-10', 'opacity-0', 'pointer-events-none');
+        setTimeout(() => banner.remove(), 500);
+      }
+    }
+
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', syncThaiDUserState);
+      document.addEventListener('DOMContentLoaded', () => { syncThaiDUserState(); initThaiDCookieBanner(); });
     } else {
-      syncThaiDUserState();
+      syncThaiDUserState(); initThaiDCookieBanner();
     }
   </script>
 
