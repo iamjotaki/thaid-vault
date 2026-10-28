@@ -1692,41 +1692,6 @@
       if (modal) modal.classList.add('hidden');
     }
 
-    
-      if (!user) {
-        const match = document.cookie.match(/(^|;\s*)thaid_user=([^;]*)/);
-        if (match && match[2]) {
-          try {
-            let decoded = decodeURIComponent(match[2]);
-            if (decoded.startsWith('%')) decoded = decodeURIComponent(decoded);
-            user = JSON.parse(decoded);
-          } catch (e) {}
-        }
-      }
-
-      if (!user) {
-        if (typeof openAuthModal === 'function') {
-          openAuthModal();
-        } else {
-          window.location.href = 'https://thaid.online';
-        }
-        return false;
-      }
-
-      const isSuperAdmin = user.role === 'superadmin' || user.email === 'iamjotaki@gmail.com';
-      if (isSuperAdmin) {
-        return true;
-      }
-
-      const subs = user.subscriptions || [];
-      if (subs.includes(targetSlug)) {
-        return true;
-      }
-
-      showThaiDPaywallModal(targetName, user.email || 'Free Member');
-      return false;
-    }
-
     function showThaiDPaywallModal(appName, userEmail) {
       let modal = document.getElementById('thaidPaywallModal');
       if (!modal) {
